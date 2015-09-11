@@ -10,6 +10,9 @@ using log4net;
 
 namespace Common.Game.Managers.Implementations
 {
+  /// <summary>
+  ///   The general event manager implementation.
+  /// </summary>
   public class EventManager
     : IEventManager
   {
@@ -38,7 +41,16 @@ namespace Common.Game.Managers.Implementations
       get { return m_queue[m_writeIndex]; }
     }
 
+    public EventManager()
+    {
+      CanPause = false;
+    }
+
     #region IManager
+
+    public bool CanPause { get; private set; }
+
+    public bool Paused { get; set; }
 
     public bool Initialize()
     {

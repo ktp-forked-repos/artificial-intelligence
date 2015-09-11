@@ -1,12 +1,21 @@
-﻿using System;
-
-namespace Common.Game.Managers.Interfaces
+﻿namespace Common.Game.Managers.Interfaces
 {
   /// <summary>
   ///   The base interface for all game managers.
   /// </summary>
   public interface IManager
   {
+    /// <summary>
+    ///   Indicates if the manager can be paused or not.
+    /// </summary>
+    bool CanPause { get; }
+
+    /// <summary>
+    ///   If <see cref="CanPause"/> is true, the manager does not process 
+    ///   updates when set to true;
+    /// </summary>
+    bool Paused { get; set; }
+
     /// <summary>
     ///   Performs the main initialization of the manager.
     /// </summary>
