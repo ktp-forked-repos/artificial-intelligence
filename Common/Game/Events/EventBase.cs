@@ -5,13 +5,13 @@ namespace Common.Game.Events
   /// <summary>
   ///   The base class for all events in the game.
   /// </summary>
-  public abstract class Event
+  public abstract class EventBase
     : EventArgs
   {
     /// <summary>
     ///   Creates the event.
     /// </summary>
-    protected Event()
+    protected EventBase()
     {
       TimeStamp = DateTime.Now.Ticks;
     }

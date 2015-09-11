@@ -17,8 +17,8 @@ namespace Common.Game.Managers.Interfaces
     /// <exception cref="ArgumentNullException">
     ///   listener is null.
     /// </exception>
-    void AddListener<T>(Action<Event> listener)
-      where T : Event;
+    void AddListener<T>(Action<EventBase> listener)
+      where T : EventBase;
 
     /// <summary>
     ///   Removes a listener for event type T.
@@ -28,8 +28,8 @@ namespace Common.Game.Managers.Interfaces
     /// <exception cref="ArgumentNullException">
     ///   listener is null.
     /// </exception>
-    void RemoveListener<T>(Action<Event> listener)
-      where T : Event;
+    void RemoveListener<T>(Action<EventBase> listener)
+      where T : EventBase;
 
     /// <summary>
     ///   Immediately triggers an event, ignoring the queue.
@@ -38,7 +38,7 @@ namespace Common.Game.Managers.Interfaces
     /// <exception cref="ArgumentNullException">
     ///   evt is null.
     /// </exception>
-    void TriggerEvent(Event evt);
+    void TriggerEvent(EventBase evt);
 
     /// <summary>
     ///   Adds an event to the queue.
@@ -47,7 +47,7 @@ namespace Common.Game.Managers.Interfaces
     /// <exception cref="ArgumentNullException">
     ///   evt is null.
     /// </exception>
-    void QueueEvent(Event evt);
+    void QueueEvent(EventBase evt);
 
     /// <summary>
     ///   Removes the oldest event of type T.  Events cannot be aborted after 
@@ -58,7 +58,7 @@ namespace Common.Game.Managers.Interfaces
     ///   True if an event was aborted.
     /// </returns>
     bool AbortFirstEvent<T>()
-      where T : Event;
+      where T : EventBase;
 
     /// <summary>
     ///   Removes all pending events of type T.  Events cannot be aborted after 
@@ -69,7 +69,7 @@ namespace Common.Game.Managers.Interfaces
     ///   The number of events removed.
     /// </returns>
     int AbortEvents<T>()
-      where T : Event;
+      where T : EventBase;
 
     /// <summary>
     ///   Clears all events from the queue.  Events cannot be aborted after 

@@ -19,21 +19,21 @@ namespace Common.Game.Managers.Implementations
       MethodBase.GetCurrentMethod().DeclaringType);
 
     private readonly Stopwatch m_eventDispatchTimer = new Stopwatch();
-    private readonly Dictionary<Type, Action<Event>> m_listeners =
-      new Dictionary<Type, Action<Event>>();
-    private readonly List<Event>[] m_queue = {
-      new List<Event>(InitialQueueSize),
-      new List<Event>(InitialQueueSize)
+    private readonly Dictionary<Type, Action<EventBase>> m_listeners =
+      new Dictionary<Type, Action<EventBase>>();
+    private readonly List<EventBase>[] m_queue = {
+      new List<EventBase>(InitialQueueSize),
+      new List<EventBase>(InitialQueueSize)
     };
     private int m_readIndex = 0;
     private int m_writeIndex = 1;
 
-    private List<Event> ReadQueue
+    private List<EventBase> ReadQueue
     {
       get { return m_queue[m_readIndex]; }
     }
 
-    private List<Event> WriteQueue
+    private List<EventBase> WriteQueue
     {
       get { return m_queue[m_writeIndex]; }
     }
@@ -93,8 +93,8 @@ namespace Common.Game.Managers.Implementations
     #endregion
     #region IEventManager
 
-    public void AddListener<T>(Action<Event> listener) 
-      where T : Event
+    public void AddListener<T>(Action<EventBase> listener) 
+      where T : EventBase
     {
       if (listener == null) throw new ArgumentNullException("listener");
 
@@ -111,8 +111,8 @@ namespace Common.Game.Managers.Implementations
       Log.VerboseFmt("{0} listener added", type.Name);
     }
 
-    public void RemoveListener<T>(Action<Event> listener) 
-      where T : Event
+    public void RemoveListener<T>(Action<EventBase> listener) 
+      where T : EventBase
     {
       if (listener == null) throw new ArgumentNullException("listener");
 
@@ -128,12 +128,12 @@ namespace Common.Game.Managers.Implementations
       Log.VerboseFmt("Removed {0} listener", type.Name);
     }
 
-    public void TriggerEvent(Event evt)
+    public void TriggerEvent(EventBase evt)
     {
       if (evt == null) throw new ArgumentNullException("evt");
 
       var type = evt.GetType();
-      Action<Event> listener;
+      Action<EventBase> listener;
       if (!m_listeners.TryGetValue(type, out listener) || listener == null)
       {
         Log.VerboseFmt("Discarding {0}, no listeners", type.Name);
@@ -144,7 +144,7 @@ namespace Common.Game.Managers.Implementations
       listener(evt);
     }
 
-    public void QueueEvent(Event evt)
+    public void QueueEvent(EventBase evt)
     {
       if (evt == null) throw new ArgumentNullException("evt");
 
@@ -153,7 +153,7 @@ namespace Common.Game.Managers.Implementations
     }
 
     public bool AbortFirstEvent<T>() 
-      where T : Event
+      where T : EventBase
     {
       var type = typeof(T);
       var toRemove = WriteQueue.First(e => e.GetType() == type);
@@ -167,7 +167,7 @@ namespace Common.Game.Managers.Implementations
       return true;
     }
 
-    public int AbortEvents<T>() where T : Event
+    public int AbortEvents<T>() where T : EventBase
     {
       var type = typeof(T);
       var count = WriteQueue.RemoveAll(e => e.GetType() == type);
