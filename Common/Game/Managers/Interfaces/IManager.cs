@@ -6,7 +6,6 @@ namespace Common.Game.Managers.Interfaces
   ///   The base interface for all game managers.
   /// </summary>
   public interface IManager
-    : IDisposable
   {
     /// <summary>
     ///   Performs the main initialization of the manager.

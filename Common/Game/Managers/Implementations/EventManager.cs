@@ -54,7 +54,8 @@ namespace Common.Game.Managers.Implementations
     {
       // queues are swapped so that any new events added in response to an 
       // event firing are processed in the next frame
-      SwapQueues();
+      m_readIndex = (m_readIndex + 1) & 1;
+      m_writeIndex = (m_writeIndex + 1) & 1;
 
       if (ReadQueue.Count == 0)
       {
@@ -86,10 +87,6 @@ namespace Common.Game.Managers.Implementations
     }
 
     public void Shutdown()
-    {
-    }
-
-    public void Dispose()
     {
     }
 
@@ -188,12 +185,5 @@ namespace Common.Game.Managers.Implementations
     }
 
     #endregion
-
-    private void SwapQueues()
-    {
-      // both queue indices are toggled between 0 and 1
-      m_readIndex = (m_readIndex + 1) & 1;
-      m_writeIndex = (m_writeIndex + 1) & 1;
-    }
   }
 }
