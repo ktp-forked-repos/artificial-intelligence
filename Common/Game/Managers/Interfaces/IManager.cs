@@ -44,7 +44,7 @@
     /// <param name="maxTime">
     ///   The max time the manager can spend on its update, in seconds.
     /// </param>
-    void Update(float deltaTime, float maxTime);
+    void Update(double deltaTime, double maxTime);
 
     /// <summary>
     ///   Shuts down the manager without releasing resources.

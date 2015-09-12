@@ -80,7 +80,7 @@ namespace Common.Game.Processes
     /// <summary>
     ///   How long the process has been in the running state.
     /// </summary>
-    public float RunningTime { get; private set; }
+    public double RunningTime { get; private set; }
 
     /// <summary>
     ///   The current state of the process.
@@ -280,7 +280,7 @@ namespace Common.Game.Processes
     /// <param name="deltaTime">
     ///   Elapsed time since the last update.
     /// </param>
-    public void Update(float deltaTime)
+    public void Update(double deltaTime)
     {
       Debug.Assert(Running);
 
@@ -356,7 +356,7 @@ namespace Common.Game.Processes
     /// <param name="deltaTime">
     ///   Time elapsed since OnUpdate was last called.
     /// </param>
-    protected abstract void OnUpdate(float deltaTime);
+    protected abstract void OnUpdate(double deltaTime);
 
     /// <summary>
     ///   Performs an action when the process is paused.
