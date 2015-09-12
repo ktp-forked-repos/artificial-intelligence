@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using Common.Extensions;
 using Common.Game.Events;
-using Common.Game.Managers.Interfaces;
+using Common.Game.Interfaces;
 using log4net;
 
-namespace Common.Game.Managers.Implementations
+namespace Common.Game.Managers
 {
   /// <summary>
   ///   The general event manager implementation.

@@ -1,7 +1,7 @@
 ﻿using System;
 using Common.Game.Events;
 
-namespace Common.Game.Managers.Interfaces
+namespace Common.Game.Interfaces
 {
   /// <summary>
   ///   Base interface for event managers.
