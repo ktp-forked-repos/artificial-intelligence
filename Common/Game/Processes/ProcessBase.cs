@@ -48,6 +48,12 @@ namespace Common.Game.Processes
       MethodBase.GetCurrentMethod().DeclaringType);
 
     /// <summary>
+    ///   Handles a process' change of state.
+    /// </summary>
+    /// <param name="sender"></param>
+    public delegate void StateChangeHandler(ProcessBase sender);
+
+    /// <summary>
     ///   Create the process.
     /// </summary>
     /// <param name="id">
@@ -66,6 +72,41 @@ namespace Common.Game.Processes
       ActivateChildOnFailure = false;
       ActivateChildOnAbort = false;
     }
+
+    #region Events
+
+    /// <summary>
+    ///   Event fires when the process successfully initializes.
+    /// </summary>
+    public event StateChangeHandler Initialized;
+
+    /// <summary>
+    ///   Event fires when the process transitions from Running -> Paused.
+    /// </summary>
+    public event StateChangeHandler Paused;
+
+    /// <summary>
+    ///   Event fires when the process transitions from Paused -> Running.
+    /// </summary>
+    public event StateChangeHandler Resumed;
+
+    /// <summary>
+    ///   Event fires when the process transitions to Succeeded.
+    /// </summary>
+    public event StateChangeHandler Succeeded;
+
+    /// <summary>
+    ///   Event fires when the process transitions to Failed.
+    /// </summary>
+    public event StateChangeHandler Failed;
+
+    /// <summary>
+    ///   Event fires when the process transitions to Aborted.
+    /// </summary>
+    public event StateChangeHandler Aborted;
+
+    #endregion
+    #region Properties
 
     /// <summary>
     ///   The unique id for this process.
@@ -116,6 +157,7 @@ namespace Common.Game.Processes
     /// </summary>
     public bool ActivateChildOnAbort { get; set; }
 
+    #endregion
     #region State Check Properties
 
     /// <summary>
@@ -174,7 +216,7 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Did the process succeed.
     /// </summary>
-    public bool Succeeded
+    public bool HasSucceeded
     {
       get { return State == ProcessState.Succeeded; }
     }
@@ -182,7 +224,7 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Did the process fail.
     /// </summary>
-    public bool Failed
+    public bool HasFailed
     {
       get { return State == ProcessState.Failed; }
     }
@@ -190,7 +232,7 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Was the process aborted.
     /// </summary>
-    public bool Aborted
+    public bool WasAborted
     {
       get { return State == ProcessState.Aborted; }
     }
@@ -246,22 +288,21 @@ namespace Common.Game.Processes
     {
       Debug.Assert(!IsInitialized);
 
-      if (!OnInitialize())
+      if (!DoInitialize())
       {
         Log.ErrorFmt("{0} failed initialization", Name);
         return false;
       }
 
       Log.VerboseFmt("{0} initialized", Name);
+      State = ProcessState.Running;
+      OnInitialized();
+
       if (BeginPaused)
       {
-        State = ProcessState.Paused;
-        OnPause();
+        Pause(true);
       }
-      else
-      {
-        State = ProcessState.Running;
-      }
+
       return true;
     }
 
@@ -277,7 +318,7 @@ namespace Common.Game.Processes
       Debug.Assert(IsRunning);
 
       RunningTime += deltaTime;
-      OnUpdate(deltaTime);
+      DoUpdate(deltaTime);
     }
 
     /// <summary>
@@ -290,31 +331,53 @@ namespace Common.Game.Processes
     {
       if (paused)
       {
-        if (IsPaused)
-        {
-          return;
-        }
-
-        Debug.Assert(IsRunning);
-        State = ProcessState.Paused;
-        OnPause();
+        Pause();
       }
       else
       {
-        if (IsRunning)
-        {
-          return;
-        }
-
-        Debug.Assert(IsPaused);
-        State = ProcessState.Running;
-        OnResume();
+        Resume();
       }
     }
 
     /// <summary>
+    ///   Pauses a running process.
+    /// </summary>
+    public void Pause()
+    {
+      Debug.Assert(IsAlive);
+
+      if (IsPaused)
+      {
+        return;
+      }
+
+      Debug.Assert(IsRunning);
+      State = ProcessState.Paused;
+      DoPause();
+      OnPaused();
+    }
+
+    /// <summary>
+    ///   Resumes a paused process.
+    /// </summary>
+    public void Resume()
+    {
+      Debug.Assert(IsAlive);
+
+      if (IsRunning)
+      {
+        return;
+      }
+
+      Debug.Assert(IsPaused);
+      State = ProcessState.Running;
+      DoResume();
+      OnResume();
+    }
+
+    /// <summary>
     ///   Marks this process as completed successfully.  May be called by 
-    ///   anyone, general called by the process itself when it meets success 
+    ///   anyone, generally called by the process itself when it meets success 
     ///   conditions.
     /// </summary>
     public void Succeed()
@@ -323,7 +386,8 @@ namespace Common.Game.Processes
 
       Log.VerboseFmt("{0} succeeded", Name);
       State = ProcessState.Succeeded;
-      OnSucceed();
+      DoSucceed();
+      OnSucceeded();
     }
     /// <summary>
     ///   Marks this process as completed with failure.  May be called by 
@@ -335,7 +399,8 @@ namespace Common.Game.Processes
 
       Log.VerboseFmt("{0} failed");
       State = ProcessState.Failed;
-      OnFail();
+      DoFail();
+      OnFailed();
     }
 
     /// <summary>
@@ -345,7 +410,8 @@ namespace Common.Game.Processes
     {
       Log.VerboseFmt("{0} aborted", Name);
       State = ProcessState.Failed;
-      OnAbort();
+      DoAbort();
+      OnAborted();
     }
 
     /// <summary>
@@ -372,39 +438,91 @@ namespace Common.Game.Processes
     /// <returns>
     ///   Success or failure of initialization.
     /// </returns>
-    protected abstract bool OnInitialize();
+    protected abstract bool DoInitialize();
 
     /// <summary>
     ///   Performs an update of the process.
     /// </summary>
     /// <param name="deltaTime">
-    ///   Time elapsed since OnUpdate was last called.
+    ///   Time elapsed since DoUpdate was last called.
     /// </param>
-    protected abstract void OnUpdate(double deltaTime);
+    protected abstract void DoUpdate(double deltaTime);
 
     /// <summary>
     ///   Performs an action when the process is paused.
     /// </summary>
-    protected abstract void OnPause();
+    protected abstract void DoPause();
 
     /// <summary>
     ///   Performs an action when the process is unpaused.
     /// </summary>
-    protected abstract void OnResume();
+    protected abstract void DoResume();
 
     /// <summary>
     ///   Performs an action when the process succeeds.
     /// </summary>
-    protected abstract void OnSucceed();
+    protected abstract void DoSucceed();
 
     /// <summary>
     ///   Performs an action when the process fails.
     /// </summary>
-    protected abstract void OnFail();
+    protected abstract void DoFail();
 
     /// <summary>
     ///   Performs an action when the process is aborted.
     /// </summary>
-    protected abstract void OnAbort();
+    protected abstract void DoAbort();
+
+    #region Event Invokers
+
+    private void OnInitialized()
+    {
+      if (Initialized != null)
+      {
+        Initialized(this);
+      }
+    }
+
+    private void OnPaused()
+    {
+      if (Paused != null)
+      {
+        Paused(this);
+      }
+    }
+
+    private void OnResume()
+    {
+      if (Resumed != null)
+      {
+        Resumed(this);
+      }
+    }
+
+    private void OnSucceeded()
+    {
+      if (Succeeded != null)
+      {
+        Succeeded(this);
+      }
+    }
+
+    private void OnFailed()
+    {
+      if (Failed != null)
+      {
+        Failed(this);
+      }
+    }
+
+    private void OnAborted()
+    {
+      if (Aborted != null)
+      {
+        Aborted(this);
+      }
+    }
+
+    #endregion
   }
 }

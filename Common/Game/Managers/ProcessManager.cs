@@ -121,7 +121,7 @@ namespace Common.Game.Managers
           case ProcessState.Succeeded:
           case ProcessState.Failed:
           case ProcessState.Aborted:
-            var activateChild = process.Succeeded ||
+            var activateChild = process.HasSucceeded ||
                                 process.ActivateChildOnFailure ||
                                 process.ActivateChildOnAbort;
             if (activateChild && process.Child != null)

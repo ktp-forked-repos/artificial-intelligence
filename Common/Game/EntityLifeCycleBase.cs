@@ -41,23 +41,36 @@ namespace Common.Game
     ///   Handles an entity's change of state.
     /// </summary>
     /// <param name="sender"></param>
-    public delegate void StateChangeHandler(object sender);
+    public delegate void StateChangeHandler(EntityLifeCycleBase sender);
 
     protected EntityLifeCycleBase()
     {
       State = EntityState.NotInitialized;
     }
 
+    #region Events
+
     /// <summary>
-    ///   Fires immediately after the entity completes a state change, allowing
-    ///   owners or other entities to respond to the change.
+    ///   Fires when the entity successfully initializes.
     /// </summary>
     public event StateChangeHandler Initialized;
 
+    /// <summary>
+    ///   Fires when the entity transitions to Activated.
+    /// </summary>
     public event StateChangeHandler Activated;
+
+    /// <summary>
+    ///   Fires when the entity transitions to DeActivated.
+    /// </summary>
     public event StateChangeHandler DeActivated;
+
+    /// <summary>
+    ///   Fires when the entity transitions to Destroyed.
+    /// </summary>
     public event StateChangeHandler Destroyed;
 
+    #endregion
     /// <summary>
     ///   Current state of the entity.
     /// </summary>
@@ -74,6 +87,8 @@ namespace Common.Game
                State == EntityState.Deactivated;
       }
     }
+
+    #region State Check Properties
 
     /// <summary>
     ///   Is the entity Active.
@@ -98,6 +113,9 @@ namespace Common.Game
     {
       get { return State == EntityState.Destroyed; }
     }
+
+    #endregion
+    #region Control Methods
 
     /// <summary>
     ///   Initialize the entity to a deactivated state.
@@ -163,6 +181,8 @@ namespace Common.Game
       OnDestroyed();
     }
 
+    #endregion
+
     /// <summary>
     ///   Performs the initialization action.
     /// </summary>
@@ -185,6 +205,8 @@ namespace Common.Game
     ///   Performs the Destroy action.
     /// </summary>
     protected abstract void DoDestroy();
+
+    #region Event Invokers
 
     private void OnInitialized()
     {
@@ -218,6 +240,7 @@ namespace Common.Game
       }
     }
 
+    #endregion
     #region IDisposable
 
     /// <summary>
