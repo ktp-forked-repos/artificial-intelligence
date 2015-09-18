@@ -88,7 +88,7 @@ namespace Common.Game.Managers
     {
       if (process == null) throw new ArgumentNullException("process");
 
-      Debug.Assert(!process.Initialized);
+      Debug.Assert(!process.IsInitialized);
       m_processes.Add(process);
       Log.VerboseFmt("Added {0}", process.Name);
     }

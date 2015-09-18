@@ -67,12 +67,20 @@
   <ItemGroup>
     <Compile Include="Extensions\LogExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="Game\Components\ComponentBase.cs" />
+    <Compile Include="Game\Entity.cs" />
+    <Compile Include="Game\Events\EntityEvents\EntityAddedEvent.cs" />
+    <Compile Include="Game\Events\EntityEvents\EntityRemovedEvent.cs" />
     <Compile Include="Game\Events\EventBase.cs" />
     <Compile Include="Game\Interfaces\IEventManager.cs" />
     <Compile Include="Game\Interfaces\IManager.cs" />
     <Compile Include="Game\Interfaces\IProcessManager.cs" />
+    <Compile Include="Game\Interfaces\IRenderable.cs" />
+    <Compile Include="Game\Interfaces\IRenderManager.cs" />
+    <Compile Include="Game\EntityLifeCycleBase.cs" />
     <Compile Include="Game\Managers\EventManager.cs" />
     <Compile Include="Game\Managers\ProcessManager.cs" />
+    <Compile Include="Game\Managers\RenderManager.cs" />
     <Compile Include="Game\Processes\ProcessBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

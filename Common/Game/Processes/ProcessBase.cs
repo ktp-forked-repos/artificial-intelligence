@@ -121,7 +121,7 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Was the process initialized successfully.
     /// </summary>
-    public bool Initialized
+    public bool IsInitialized
     {
       get { return State != ProcessState.NotInitialized; }
     }
@@ -129,7 +129,7 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Is the process in a live state.
     /// </summary>
-    public bool Alive
+    public bool IsAlive
     {
       get
       {
@@ -140,7 +140,7 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Is the process alive and running.
     /// </summary>
-    public bool Running
+    public bool IsRunning
     {
       get { return State == ProcessState.Running; }
     }
@@ -148,28 +148,20 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Is the process alive and paused.
     /// </summary>
-    public bool Paused
+    public bool IsPaused
     {
       get { return State == ProcessState.Paused; }
       set
       {
-        Debug.Assert(Alive);
-        if (value)
-        {
-          State = ProcessState.Paused;
-          OnPause();
-        }
-        else
-        {
-          State = ProcessState.Running;
-        }
+        Debug.Assert(IsAlive);
+        Pause(value);
       }
     }
 
     /// <summary>
     ///   Is the process in any completed state.
     /// </summary>
-    public bool Completed
+    public bool IsCompleted
     {
       get
       {
@@ -252,7 +244,7 @@ namespace Common.Game.Processes
     /// </returns>
     public bool Initialize()
     {
-      Debug.Assert(!Initialized);
+      Debug.Assert(!IsInitialized);
 
       if (!OnInitialize())
       {
@@ -282,10 +274,42 @@ namespace Common.Game.Processes
     /// </param>
     public void Update(double deltaTime)
     {
-      Debug.Assert(Running);
+      Debug.Assert(IsRunning);
 
       RunningTime += deltaTime;
       OnUpdate(deltaTime);
+    }
+
+    /// <summary>
+    ///   Pauses or resumes a process.
+    /// </summary>
+    /// <param name="paused">
+    ///   If true, pauses the process.  If false, resumes the process.
+    /// </param>
+    public void Pause(bool paused)
+    {
+      if (paused)
+      {
+        if (IsPaused)
+        {
+          return;
+        }
+
+        Debug.Assert(IsRunning);
+        State = ProcessState.Paused;
+        OnPause();
+      }
+      else
+      {
+        if (IsRunning)
+        {
+          return;
+        }
+
+        Debug.Assert(IsPaused);
+        State = ProcessState.Running;
+        OnResume();
+      }
     }
 
     /// <summary>
@@ -295,7 +319,7 @@ namespace Common.Game.Processes
     /// </summary>
     public void Succeed()
     {
-      Debug.Assert(Alive);
+      Debug.Assert(IsAlive);
 
       Log.VerboseFmt("{0} succeeded", Name);
       State = ProcessState.Succeeded;
@@ -307,7 +331,7 @@ namespace Common.Game.Processes
     /// </summary>
     public void Fail()
     {
-      Debug.Assert(Alive);
+      Debug.Assert(IsAlive);
 
       Log.VerboseFmt("{0} failed");
       State = ProcessState.Failed;
@@ -362,6 +386,11 @@ namespace Common.Game.Processes
     ///   Performs an action when the process is paused.
     /// </summary>
     protected abstract void OnPause();
+
+    /// <summary>
+    ///   Performs an action when the process is unpaused.
+    /// </summary>
+    protected abstract void OnResume();
 
     /// <summary>
     ///   Performs an action when the process succeeds.
