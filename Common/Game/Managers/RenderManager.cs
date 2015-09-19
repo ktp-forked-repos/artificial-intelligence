@@ -223,19 +223,19 @@ namespace Common.Game.Managers
         "Tracking {0} IRenderables from {1}", components.Count, entity.Name);
     }
 
-    private void HandleComponentActivated(EntityLifeCycleBase sender)
+    private void HandleComponentActivated(object sender, EventArgs e)
     {
       var renderable = (IRenderable) sender;
       AddRenderable(renderable);
     }
 
-    private void HandleComponentDeActivated(EntityLifeCycleBase sender)
+    private void HandleComponentDeActivated(object sender, EventArgs e)
     {
       var renderable = (IRenderable) sender;
       RemoveRenderable(renderable);
     }
 
-    private void HandleComponentDestroyed(EntityLifeCycleBase sender)
+    private void HandleComponentDestroyed(object sender, EventArgs e)
     {
       var renderable = (IRenderable) sender;
       RemoveRenderable(renderable);

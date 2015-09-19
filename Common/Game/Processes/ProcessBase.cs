@@ -48,12 +48,6 @@ namespace Common.Game.Processes
       MethodBase.GetCurrentMethod().DeclaringType);
 
     /// <summary>
-    ///   Handles a process' change of state.
-    /// </summary>
-    /// <param name="sender"></param>
-    public delegate void StateChangeHandler(ProcessBase sender);
-
-    /// <summary>
     ///   Create the process.
     /// </summary>
     /// <param name="id">
@@ -78,32 +72,32 @@ namespace Common.Game.Processes
     /// <summary>
     ///   Event fires when the process successfully initializes.
     /// </summary>
-    public event StateChangeHandler Initialized;
+    public event EventHandler Initialized;
 
     /// <summary>
     ///   Event fires when the process transitions from Running -> Paused.
     /// </summary>
-    public event StateChangeHandler Paused;
+    public event EventHandler Paused;
 
     /// <summary>
     ///   Event fires when the process transitions from Paused -> Running.
     /// </summary>
-    public event StateChangeHandler Resumed;
+    public event EventHandler Resumed;
 
     /// <summary>
     ///   Event fires when the process transitions to Succeeded.
     /// </summary>
-    public event StateChangeHandler Succeeded;
+    public event EventHandler Succeeded;
 
     /// <summary>
     ///   Event fires when the process transitions to Failed.
     /// </summary>
-    public event StateChangeHandler Failed;
+    public event EventHandler Failed;
 
     /// <summary>
     ///   Event fires when the process transitions to Aborted.
     /// </summary>
-    public event StateChangeHandler Aborted;
+    public event EventHandler Aborted;
 
     #endregion
     #region Properties
@@ -479,7 +473,7 @@ namespace Common.Game.Processes
     {
       if (Initialized != null)
       {
-        Initialized(this);
+        Initialized(this, EventArgs.Empty);
       }
     }
 
@@ -487,7 +481,7 @@ namespace Common.Game.Processes
     {
       if (Paused != null)
       {
-        Paused(this);
+        Paused(this, EventArgs.Empty);
       }
     }
 
@@ -495,7 +489,7 @@ namespace Common.Game.Processes
     {
       if (Resumed != null)
       {
-        Resumed(this);
+        Resumed(this, EventArgs.Empty);
       }
     }
 
@@ -503,7 +497,7 @@ namespace Common.Game.Processes
     {
       if (Succeeded != null)
       {
-        Succeeded(this);
+        Succeeded(this, EventArgs.Empty);
       }
     }
 
@@ -511,7 +505,7 @@ namespace Common.Game.Processes
     {
       if (Failed != null)
       {
-        Failed(this);
+        Failed(this, EventArgs.Empty);
       }
     }
 
@@ -519,7 +513,7 @@ namespace Common.Game.Processes
     {
       if (Aborted != null)
       {
-        Aborted(this);
+        Aborted(this, EventArgs.Empty);
       }
     }
 

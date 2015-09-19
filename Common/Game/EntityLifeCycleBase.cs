@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Game
 {
@@ -37,12 +38,6 @@ namespace Common.Game
   public abstract class EntityLifeCycleBase
     : IDisposable
   {
-    /// <summary>
-    ///   Handles an entity's change of state.
-    /// </summary>
-    /// <param name="sender"></param>
-    public delegate void StateChangeHandler(EntityLifeCycleBase sender);
-
     protected EntityLifeCycleBase()
     {
       State = EntityState.NotInitialized;
@@ -53,22 +48,22 @@ namespace Common.Game
     /// <summary>
     ///   Fires when the entity successfully initializes.
     /// </summary>
-    public event StateChangeHandler Initialized;
+    public event EventHandler Initialized;
 
     /// <summary>
     ///   Fires when the entity transitions to Activated.
     /// </summary>
-    public event StateChangeHandler Activated;
+    public event EventHandler Activated;
 
     /// <summary>
     ///   Fires when the entity transitions to DeActivated.
     /// </summary>
-    public event StateChangeHandler DeActivated;
+    public event EventHandler DeActivated;
 
     /// <summary>
     ///   Fires when the entity transitions to Destroyed.
     /// </summary>
-    public event StateChangeHandler Destroyed;
+    public event EventHandler Destroyed;
 
     #endregion
     /// <summary>
@@ -172,7 +167,7 @@ namespace Common.Game
     }
 
     /// <summary>
-    ///   Destroys the entity.
+    ///   Destroys the entity.  Must be callable from any state
     /// </summary>
     public void Destroy()
     {
@@ -212,7 +207,7 @@ namespace Common.Game
     {
       if (Initialized != null)
       {
-        Initialized(this);
+        Initialized(this, EventArgs.Empty);
       }
     }
 
@@ -220,7 +215,7 @@ namespace Common.Game
     {
       if (Activated != null)
       {
-        Activated(this);
+        Activated(this, EventArgs.Empty);
       }
     }
 
@@ -228,7 +223,7 @@ namespace Common.Game
     {
       if (DeActivated != null)
       {
-        DeActivated(this);
+        DeActivated(this, EventArgs.Empty);
       }
     }
 
@@ -236,7 +231,7 @@ namespace Common.Game
     {
       if (Destroyed != null)
       {
-        Destroyed(this);
+        Destroyed(this, EventArgs.Empty);
       }
     }
 
@@ -246,9 +241,13 @@ namespace Common.Game
     /// <summary>
     ///   Destroys, then disposes of the entity.
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
     public void Dispose()
     {
-      Destroy();
+      if (!IsDestroyed)
+      {
+        Destroy();
+      }
       Dispose(true);
       GC.SuppressFinalize(this);
     }
