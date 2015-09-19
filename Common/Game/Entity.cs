@@ -15,6 +15,9 @@ namespace Common.Game
   ///   manages the state of all its components, and the components provide
   ///   all the functionality for the entity.
   /// </summary>
+  /// <remarks>
+  ///   As designed an entity may only hold one component of each type.
+  /// </remarks>
   public class Entity
     : EntityLifeCycleBase
   {
@@ -26,13 +29,18 @@ namespace Common.Game
     private readonly List<ComponentBase> m_updateComponents = 
       new List<ComponentBase>();
 
+    /// <summary>
+    ///   Create an entity.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
     public Entity(int id, string name = "")
     {
       Id = id;
-      Name = string.Format("Entity {0}{1}", id,
-        string.IsNullOrEmpty(name)
-          ? string.Empty
-          : " " + name);
+      name = string.IsNullOrEmpty(name)
+        ? string.Empty
+        : " " + name;
+      Name = string.Format("Entity {0}{1}", id, name);
     }
 
     /// <summary>

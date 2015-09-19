@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Common.Extensions;
+using Common.Game.Components;
 using Common.Game.Events;
 using Common.Game.Events.EntityEvents;
 using Common.Game.Interfaces;
@@ -9,7 +12,11 @@ using SFML.Graphics;
 
 namespace Common.Game.Managers
 {
-  public class RenderManager
+  /// <summary>
+  ///   The general render manager implementation.  Renders to a SFML 
+  ///   RenderWindow
+  /// </summary>
+  public sealed class RenderManager
     : IRenderManager
   {
     private const int TargetFrameRate = 60;
@@ -28,6 +35,13 @@ namespace Common.Game.Managers
       new List<IRenderable>(InitialListSize);
     private bool m_stateChanged = false;
     private float m_timeSinceLastRender = 0f;
+    private int m_nextId = 1;
+
+    // renderables with the default id of 0 get an id from this
+    private int NextId
+    {
+      get { return m_nextId++; }
+    }
 
     /// <summary>
     ///   Create the render manager.
@@ -111,18 +125,83 @@ namespace Common.Game.Managers
       }
     }
 
+    public void AddRenderable(IRenderable renderable)
+    {
+      if (renderable == null) throw new ArgumentNullException("renderable");
+      if (renderable.Id != 0 && m_renderables.Any(r => r.Id == renderable.Id))
+        throw new InvalidOperationException(string.Format(
+          "IRenderable {0} is already tracked", renderable.Id));
+
+      if (renderable.Id == 0)
+      {
+        renderable.Id = NextId;
+      }
+
+      m_renderables.Add(renderable);
+      m_stateChanged = true;
+    }
+
+    public void RemoveRenderable(IRenderable renderable)
+    {
+      if (renderable == null) throw new ArgumentNullException("renderable");
+
+      m_renderables.RemoveAll(r => r.Id == renderable.Id);
+    }
+
     #endregion
 
     private void HandleEntityAdded(EventBase e)
     {
       var evt = (EntityAddedEvent) e;
-      // TODO: Check for renderables to add
-    }
 
+      // TODO: Get the entity
+      var entity = new Entity(-1);
+      var components = entity.GetComponentsByBase<RenderComponentBase>();
+
+      foreach (var component in components)
+      {
+        component.Activated += HandleComponentActivated;
+        component.DeActivated += HandleComponentDeActivated;
+
+        if (component.IsActive)
+        {
+          AddRenderable(component);
+        }
+      }
+
+      Log.VerboseFmtIf(components.Count > 0,
+        "Tracking {0} IRenderables from {1}", components.Count, entity.Name);
+    }
+    
     private void HandleEntityRemoved(EventBase e)
     {
       var evt = (EntityRemovedEvent) e;
-      // TODO: Check for renderables to remove
+
+      // TODO: Get the entity
+      var entity = new Entity(-1);
+      var components = entity.GetComponentsByBase<RenderComponentBase>();
+
+      foreach (var component in components)
+      {
+        component.Activated -= HandleComponentActivated;
+        component.DeActivated -= HandleComponentDeActivated;
+        RemoveRenderable(component);
+      }
+
+      Log.VerboseFmtIf(components.Count > 0,
+        "Cleared {0} IRenderables from {1}", components.Count, entity.Name);
+    }
+
+    private void HandleComponentActivated(EntityLifeCycleBase sender)
+    {
+      var renderable = (IRenderable) sender;
+      AddRenderable(renderable);
+    }
+
+    private void HandleComponentDeActivated(EntityLifeCycleBase sender)
+    {
+      var renderable = (IRenderable) sender;
+      RemoveRenderable(renderable);
     }
   }
 }

@@ -22,11 +22,17 @@ namespace Common.Game.Interfaces
   ///   The interface for all renderable items.
   /// 
   ///   IComparable should be implemented by calling 
-  ///   <see cref="RenderableCompare.Compare"/> for consistent comparisons.
+  ///   <see cref="RenderableCompare.CompareTo"/> for consistent comparisons.
   /// </summary>
   public interface IRenderable
     : IComparable<IRenderable>
   {
+    /// <summary>
+    ///   The unique id for this renderable.  This will be generated and 
+    ///   assigned by the render manager.
+    /// </summary>
+    int Id { get; set; }
+
     /// <summary>
     ///   The depth this object is rendered at, with smaller values being 
     ///   closer to the camera.

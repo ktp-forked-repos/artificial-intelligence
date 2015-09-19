@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Common.Game.Events.EntityEvents
+﻿namespace Common.Game.Events.EntityEvents
 {
+  /// <summary>
+  ///   Signals that an entity is about to be removed from the entity manager.
+  /// 
+  ///   This event is triggered immediately before the entity is removed.
+  /// </summary>
   public class EntityRemovedEvent
     : EventBase
   {
-    // TODO: Add members
+    public int EntityId { get; set; }
   }
 }

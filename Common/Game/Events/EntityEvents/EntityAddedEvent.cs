@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Common.Game.Events.EntityEvents
+﻿namespace Common.Game.Events.EntityEvents
 {
+  /// <summary>
+  ///   Signals that an entity was added to the entity manager.
+  /// 
+  ///   The entity is initialized when this event is triggered.
+  /// </summary>
   public class EntityAddedEvent
     : EventBase
   {
-    // TODO: Add members
+    public int EntityId { get; set; }
   }
 }

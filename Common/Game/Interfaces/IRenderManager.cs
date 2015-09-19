@@ -17,5 +17,27 @@ namespace Common.Game.Interfaces
     ///   target is null.
     /// </exception>
     void DrawOneFrame(RenderTarget target);
+
+    /// <summary>
+    ///   Add an object to be rendered.
+    /// </summary>
+    /// <param name="renderable"></param>
+    /// <exception cref="ArgumentNullException">
+    ///   renderable is null.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   This renderable is already being tracked by the render manager.  At 
+    ///   least, the render manager already has a renderable with this id.
+    /// </exception>
+    void AddRenderable(IRenderable renderable);
+
+    /// <summary>
+    ///   Remove an object from the manager.
+    /// </summary>
+    /// <param name="renderable"></param>
+    /// <exception cref="ArgumentNullException">
+    ///   renderable is null.
+    /// </exception>
+    void RemoveRenderable(IRenderable renderable);
   }
 }
