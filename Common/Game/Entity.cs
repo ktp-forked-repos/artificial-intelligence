@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Common.Extensions;
 using Common.Game.Components;
 using log4net;
@@ -49,7 +50,11 @@ namespace Common.Game
     /// </summary>
     public bool NeedsUpdate { get; private set; }
 
-    // TODO: TransformComponent
+    /// <summary>
+    ///   Gets the transform for this entity, if it has one.  Provided for 
+    ///   convenience since most/all entities will have a transform.
+    /// </summary>
+    public TransformComponentBase TransformComponent { get; private set; }
 
     /// <summary>
     ///   Performs a frame update when then entity is Active and NeedsUpdate 
@@ -60,7 +65,7 @@ namespace Common.Game
     /// <param name="deltaTime">
     ///   Time since the last update.
     /// </param>
-    public virtual void Update(double deltaTime)
+    public virtual void Update(float deltaTime)
     {
       Debug.Assert(IsActive);
       Debug.Assert(NeedsUpdate);
@@ -172,23 +177,43 @@ namespace Common.Game
 
     protected override bool DoInitialize()
     {
-      // TODO: get transform component
+      var transforms = GetComponentsByBase<TransformComponentBase>();
+      if (transforms.Count > 1)
+      {
+        var sb = new StringBuilder()
+          .AppendFormat("{0} initialized with {1} TransformComponentBase: ",
+            Name, transforms.Count);
+        foreach (var transform in transforms)
+        {
+          sb.Append(transform.GetType().FullName).Append(", ");
+        }
+        Log.Error(sb);
+        return false;
+      }
+      else if (transforms.Count == 0)
+      {
+        Log.WarnFmt("{0} initialized with no TransformComponentBase",
+          Name);
+      }
+      else
+      {
+        TransformComponent = transforms.First();
+      }
 
       foreach (var component in m_components.Values)
       {
-        if (component.Initialize())
+        if (!component.Initialize())
         {
-          if (component.NeedsUpdate)
-          {
-            m_updateComponents.Add(component);
-          }
-          continue;
+          Log.ErrorFmt("Failed to initialize {0} in {1}",
+            component.GetType().Name, Name);
+          Dispose();
+          return false;
         }
 
-        Log.ErrorFmt("Failed to initialize {0} in {1}",
-          component.GetType().Name, Name);
-        Dispose();
-        return false;
+        if (component.NeedsUpdate)
+        {
+          m_updateComponents.Add(component);
+        }
       }
 
       Log.VerboseFmt("{0} initialized {1} components",

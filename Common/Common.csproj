@@ -68,6 +68,7 @@
     <Compile Include="Extensions\LogExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Game\Components\ComponentBase.cs" />
+    <Compile Include="Game\Components\TransformComponentBase.cs" />
     <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\Events\EntityEvents\EntityAddedEvent.cs" />
     <Compile Include="Game\Events\EntityEvents\EntityRemovedEvent.cs" />

@@ -62,7 +62,7 @@ namespace Common.Game.Managers
       return true;
     }
 
-    public void Update(double deltaTime, double maxTime)
+    public void Update(float deltaTime, float maxTime)
     {
       // queues are swapped so that any new events added in response to an 
       // event firing are processed in the next frame

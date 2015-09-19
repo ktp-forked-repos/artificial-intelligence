@@ -13,7 +13,7 @@ namespace Common.Game.Managers
     : IRenderManager
   {
     private const int TargetFrameRate = 60;
-    private const double UpdateInterval = 1.0 / TargetFrameRate;
+    private const float UpdateInterval = 1f / TargetFrameRate;
     private const int InitialListSize = 10;
 
     private static readonly ILog Log = LogManager.GetLogger(
@@ -27,7 +27,7 @@ namespace Common.Game.Managers
     private readonly List<IRenderable> m_renderables = 
       new List<IRenderable>(InitialListSize);
     private bool m_stateChanged = false;
-    private double m_timeSinceLastRender = 0.0;
+    private float m_timeSinceLastRender = 0f;
 
     /// <summary>
     ///   Create the render manager.
@@ -67,7 +67,7 @@ namespace Common.Game.Managers
       return true;
     }
 
-    public void Update(double deltaTime, double maxTime)
+    public void Update(float deltaTime, float maxTime)
     {
       if (Paused)
       {

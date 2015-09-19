@@ -49,7 +49,7 @@ namespace Common.Game.Managers
       return true;
     }
 
-    public void Update(double deltaTime, double maxTime)
+    public void Update(float deltaTime, float maxTime)
     {
       if (Paused)
       {
@@ -95,7 +95,7 @@ namespace Common.Game.Managers
 
     #endregion
 
-    private void UpdateProcesses(double deltaTime)
+    private void UpdateProcesses(float deltaTime)
     {
       foreach (var process in m_processes)
       {
