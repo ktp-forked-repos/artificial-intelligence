@@ -72,8 +72,8 @@
     <Compile Include="Game\Components\TransformComponentBase.cs" />
     <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\Events\EntityEvents\EntityAddedEvent.cs" />
-    <Compile Include="Game\Events\EntityEvents\EntityRemovedEvent.cs" />
     <Compile Include="Game\Events\EventBase.cs" />
+    <Compile Include="Game\Interfaces\IEntityManager.cs" />
     <Compile Include="Game\Interfaces\IEventManager.cs" />
     <Compile Include="Game\Interfaces\IManager.cs" />
     <Compile Include="Game\Interfaces\IProcessManager.cs" />

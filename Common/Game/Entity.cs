@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Common.Extensions;
 using Common.Game.Components;
+using Common.Game.Interfaces;
 using log4net;
 
 namespace Common.Game
@@ -17,6 +18,8 @@ namespace Common.Game
   /// </summary>
   /// <remarks>
   ///   As designed an entity may only hold one component of each type.
+  /// 
+  ///   See <see cref="IEntityManager"/> for details of the entity life cycle.
   /// </remarks>
   public class Entity
     : EntityLifeCycleBase

@@ -75,6 +75,8 @@ namespace Common.Game
     ///   Current state of the entity.
     /// </summary>
     public EntityState State { get; private set; }
+    
+    #region State Check Properties
 
     /// <summary>
     ///   Has the entity been initialized, but not disposed.
@@ -87,8 +89,6 @@ namespace Common.Game
                State == EntityState.Deactivated;
       }
     }
-
-    #region State Check Properties
 
     /// <summary>
     ///   Is the entity Active.
