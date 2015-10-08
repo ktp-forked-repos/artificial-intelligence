@@ -1,8 +1,8 @@
-﻿using Common.Extensions;
+﻿using Game.Core.Extensions;
 using Microsoft.Xna.Framework;
 using SFML.Graphics;
 
-namespace Common.Game.Components
+namespace Game.Core.Components
 {
   /// <summary>
   ///   The base class for all types that supply an object transform.

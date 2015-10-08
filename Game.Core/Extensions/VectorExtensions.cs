@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using SFML.System;
 
-namespace Common.Extensions
+namespace Game.Core.Extensions
 {
   /// <summary>
   ///   Extensions to help with conversions between the vector classes.

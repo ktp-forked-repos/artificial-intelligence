@@ -4,14 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Common.Extensions;
-using Common.Game.Components;
-using Common.Game.Events;
-using Common.Game.Events.EntityEvents;
-using Common.Game.Interfaces;
+using Game.Core.Components;
+using Game.Core.Events;
+using Game.Core.Events.EntityEvents;
+using Game.Core.Interfaces;
 using log4net;
 using SFML.Graphics;
 
-namespace Common.Game.Managers
+namespace Game.Core.Managers
 {
   /// <summary>
   ///   The general render manager implementation.  Renders to a SFML 

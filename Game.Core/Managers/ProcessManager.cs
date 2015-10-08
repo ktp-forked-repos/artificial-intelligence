@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Common.Extensions;
-using Common.Game.Interfaces;
-using Common.Game.Processes;
+using Game.Core.Interfaces;
+using Game.Core.Processes;
 using log4net;
 
-namespace Common.Game.Managers
+namespace Game.Core.Managers
 {
   /// <summary>
   ///   The general process manager implementation.

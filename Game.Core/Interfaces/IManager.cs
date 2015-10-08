@@ -1,4 +1,4 @@
-﻿namespace Common.Game.Interfaces
+﻿namespace Game.Core.Interfaces
 {
   /// <summary>
   ///   The base interface for all game managers.

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Common.Game
+namespace Game.Core
 {
   /// <summary>
   ///   The current state of the entity object in its lifetime.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Common.Game.Interfaces
+namespace Game.Core.Interfaces
 {
   /// <summary>
   ///   The base for all entity manager classes.

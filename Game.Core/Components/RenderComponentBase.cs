@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using Common.Extensions;
-using Common.Game.Interfaces;
+using Game.Core.Interfaces;
 using log4net;
 using SFML.Graphics;
 
-namespace Common.Game.Components
+namespace Game.Core.Components
 {
   /// <summary>
   ///   The base for all SFML renderable components.  Adding a renderable 

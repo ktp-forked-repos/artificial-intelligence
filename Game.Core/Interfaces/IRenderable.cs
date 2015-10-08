@@ -1,7 +1,7 @@
 ﻿using System;
 using SFML.Graphics;
 
-namespace Common.Game.Interfaces
+namespace Game.Core.Interfaces
 {
   /// <summary>
   ///   Holds some constants for common render depth values.

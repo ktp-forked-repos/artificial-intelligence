@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.Game.Processes;
+using Game.Core.Processes;
 
-namespace Common.Game.Interfaces
+namespace Game.Core.Interfaces
 {
   /// <summary>
   ///   Base interface for process managers.

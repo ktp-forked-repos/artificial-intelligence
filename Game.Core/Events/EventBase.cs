@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Common.Game.Events
+namespace Game.Core.Events
 {
   /// <summary>
   ///   The base class for all events in the game.

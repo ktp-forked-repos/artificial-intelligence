@@ -4,7 +4,7 @@ using System.Reflection;
 using Common.Extensions;
 using log4net;
 
-namespace Common.Game.Processes
+namespace Game.Core.Processes
 {
   /// <summary>
   ///   The states that a process can exist in.

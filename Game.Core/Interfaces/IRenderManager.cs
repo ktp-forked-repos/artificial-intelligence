@@ -1,7 +1,7 @@
 ﻿using System;
 using SFML.Graphics;
 
-namespace Common.Game.Interfaces
+namespace Game.Core.Interfaces
 {
   /// <summary>
   ///   The base for all render managers.
