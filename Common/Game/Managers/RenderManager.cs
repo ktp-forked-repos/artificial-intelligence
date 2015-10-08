@@ -138,13 +138,13 @@ namespace Common.Game.Managers
     public void AddRenderable(IRenderable renderable)
     {
       if (renderable == null) throw new ArgumentNullException("renderable");
-      if (renderable.Id != 0 && m_renderables.Any(r => r.Id == renderable.Id))
+      if (renderable.RenderId != 0 && m_renderables.Any(r => r.RenderId == renderable.RenderId))
         throw new InvalidOperationException(string.Format(
-          "IRenderable {0} is already tracked", renderable.Id));
+          "IRenderable {0} is already tracked", renderable.RenderId));
 
-      if (renderable.Id == 0)
+      if (renderable.RenderId == 0)
       {
-        renderable.Id = NextId;
+        renderable.RenderId = NextId;
       }
 
       m_renderables.Add(renderable);
@@ -155,7 +155,7 @@ namespace Common.Game.Managers
     {
       if (renderable == null) throw new ArgumentNullException("renderable");
 
-      m_toRemove.Add(renderable.Id);
+      m_toRemove.Add(renderable.RenderId);
       m_stateChanged = true;
     }
 
@@ -169,7 +169,7 @@ namespace Common.Game.Managers
       }
 
       var remaining = m_renderables.RemoveAllItems(m_toRemove,
-        (renderable, id) => renderable.Id == id);
+        (renderable, id) => renderable.RenderId == id);
       Debug.Assert(!remaining.Any());
       m_toRemove.Clear();
     }

@@ -31,7 +31,7 @@ namespace Common.Game.Interfaces
     ///   The unique id for this renderable.  This will be generated and 
     ///   assigned by the render manager.
     /// </summary>
-    int Id { get; set; }
+    int RenderId { get; set; }
 
     /// <summary>
     ///   The depth this object is rendered at, with smaller values being 

@@ -42,7 +42,7 @@ namespace Common.Game.Components
     protected RenderComponentBase(Entity parent) 
       : base(parent)
     {
-      Id = 0;
+      RenderId = 0;
     }
 
     #region ComponentBase
@@ -63,7 +63,7 @@ namespace Common.Game.Components
     #endregion
     #region IRenderable
 
-    public int Id { get; set; }
+    public int RenderId { get; set; }
     
     public int RenderDepth { get; protected set; }
 
