@@ -25,8 +25,7 @@ namespace Common.Game.Managers
       new List<ProcessBase>(InitialListSize);
     private readonly List<ProcessBase> m_toAdd = 
       new List<ProcessBase>(InitialListSize);
-    private readonly List<ProcessBase> m_toRemove =
-      new List<ProcessBase>(InitialListSize);
+    private readonly List<int> m_toRemove = new List<int>(InitialListSize);
 
     public ProcessManager()
     {
@@ -56,8 +55,9 @@ namespace Common.Game.Managers
         return;
       }
 
+      ProcessPendingRemoves();
+      ProcessPendingAdds();
       UpdateProcesses(deltaTime);
-      ProcessPendingAddRemove();
     }
 
     public void Shutdown()
@@ -71,7 +71,7 @@ namespace Common.Game.Managers
     }
 
     #endregion
-    #region IEventManager
+    #region IProcessManager
 
     public ProcessBase GetProcess(int id)
     {
@@ -87,8 +87,11 @@ namespace Common.Game.Managers
     public void AddProcess(ProcessBase process)
     {
       if (process == null) throw new ArgumentNullException("process");
+      if (m_processes.Any(p => p.Id == process.Id))
+        throw new InvalidOperationException(string.Format(
+          "Process id {0} is already in use", process.Id));
 
-      Debug.Assert(!process.IsInitialized);
+      Debug.Assert(process.IsInitialized);
       m_processes.Add(process);
       Log.VerboseFmt("Added {0}", process.Name);
     }
@@ -102,22 +105,14 @@ namespace Common.Game.Managers
         switch (process.State)
         {
           case ProcessState.NotInitialized:
-            if (!process.Initialize())
-            {
-              Log.ErrorFmt("{0} failed initialization and will be removed",
-                process.Name);
-              m_toRemove.Add(process);
-            }
+          case ProcessState.Paused:
+            // intentionally empty
             break;
 
           case ProcessState.Running:
             process.Update(deltaTime);
             break;
-
-          case ProcessState.Paused:
-            // intentionally empty
-            break;
-
+            
           case ProcessState.Succeeded:
           case ProcessState.Failed:
           case ProcessState.Aborted:
@@ -131,7 +126,7 @@ namespace Common.Game.Managers
                 process.Name);
               m_toAdd.Add(child);
             }
-            m_toRemove.Add(process);
+            m_toRemove.Add(process.Id);
             break;
 
           default:
@@ -140,48 +135,28 @@ namespace Common.Game.Managers
       }
     }
 
-    private void ProcessPendingAddRemove()
+    private void ProcessPendingAdds()
     {
-      if (m_toRemove.Count > 0)
+      if (m_toAdd.Count == 0)
       {
-        // track the number left to remove
-        var toRemove = m_toRemove.Count;
-
-        // iterate backwards over the process list so we can remove as we go
-        for (var procIndex = m_processes.Count - 1; procIndex >= 0; procIndex--)
-        {
-          var process = m_processes[procIndex];
-
-          // iterate over the valid processes remaining to be removed
-          for (var removeIndex = 0; removeIndex < toRemove; removeIndex++)
-          {
-            if (m_toRemove[removeIndex].Id != process.Id)
-            {
-              continue;
-            }
-
-            m_processes.RemoveAt(procIndex);
-            Log.VerboseFmt("{0} removed", process.Name);
-
-            // based on the C++ swap & pop idiom... except we don't care about
-            // keeping the process that was just removed so we overwrite it
-            // with the last process on the list waiting for removal
-            m_toRemove[removeIndex] = m_toRemove[toRemove - 1];
-            toRemove--;
-            break;
-          }
-
-          if (toRemove == 0)
-          {
-            break;
-          }
-        }
-
-        m_toRemove.Clear();
+        return;
       }
 
       m_processes.AddRange(m_toAdd);
       m_toAdd.Clear();
+    }
+
+    private void ProcessPendingRemoves()
+    {
+      if (m_toRemove.Count == 0)
+      {
+        return;
+      }
+
+      var remaining = m_processes.RemoveAllItems(m_toRemove, 
+        (process, id) => process.Id == id);
+      Debug.Assert(!remaining.Any());
+      m_toRemove.Clear();
     }
   }
 }

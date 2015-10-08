@@ -63,7 +63,6 @@ namespace Common.Game.Components
     #endregion
     #region IRenderable
 
-    // To be set by render manager!
     public int Id { get; set; }
     
     public int RenderDepth { get; protected set; }

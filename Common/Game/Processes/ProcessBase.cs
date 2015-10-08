@@ -272,8 +272,7 @@ namespace Common.Game.Processes
     #region State Control Methods
 
     /// <summary>
-    ///   Initializes a new process.  Should only be called by the process 
-    ///   manager.
+    ///   Initializes a new process.
     /// </summary>
     /// <returns>
     ///   Success or failure of initialization.

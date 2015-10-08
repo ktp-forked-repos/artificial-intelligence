@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Common.Extensions;
@@ -167,30 +168,9 @@ namespace Common.Game.Managers
         return;
       }
 
-      // track the number left to remove
-      var numToRemove = m_toRemove.Count;
-
-      // iterate backwards over the renderable list so we can remove as we go
-      for (var renderIdx = m_renderables.Count - 1; renderIdx >= 0; renderIdx--)
-      {
-        var renderable = m_renderables[renderIdx];
-
-        // iterate over renderables waiting to be removed
-        for (var removeIdx = 0; removeIdx < numToRemove; removeIdx++)
-        {
-          if (m_toRemove[removeIdx] != renderable.Id)
-          {
-            continue;
-          }
-
-          // swap & pop, but with just an overwrite instead of swap
-          m_renderables.RemoveAt(renderIdx);
-          m_toRemove[removeIdx] = m_toRemove[numToRemove - 1];
-          numToRemove--;
-          break;
-        }
-      }
-
+      var remaining = m_renderables.RemoveAllItems(m_toRemove,
+        (renderable, id) => renderable.Id == id);
+      Debug.Assert(!remaining.Any());
       m_toRemove.Clear();
     }
 

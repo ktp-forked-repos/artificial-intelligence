@@ -39,6 +39,9 @@ namespace Common.Game.Interfaces
     /// <exception cref="ArgumentNullException">
     ///   process is null.
     /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   process does not have a unique id.
+    /// </exception>
     void AddProcess(ProcessBase process);
   }
 }
