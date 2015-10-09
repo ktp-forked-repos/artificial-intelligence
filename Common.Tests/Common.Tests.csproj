@@ -59,6 +59,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ExtensionsTests\ListExtensionsTests.cs" />
     <Compile Include="ExtensionsTests\LogExtensionsTests.cs" />
     <Compile Include="GlobalSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
