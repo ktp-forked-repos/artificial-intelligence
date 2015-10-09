@@ -7,7 +7,7 @@ using NUnit.Framework;
 // ReSharper disable RedundantCast
 // ReSharper disable PossibleMultipleEnumeration
 
-namespace Commont.Tests.ExtensionsTests
+namespace Common.Tests.ExtensionsTests
 {
   [TestFixture]
   public class ListExtensionsTests

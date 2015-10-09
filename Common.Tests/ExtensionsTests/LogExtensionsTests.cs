@@ -5,7 +5,7 @@ using log4net.Core;
 using Moq;
 using NUnit.Framework;
 
-namespace Commont.Tests.ExtensionsTests
+namespace Common.Tests.ExtensionsTests
 {
   [TestFixture]
   public class LogExtensionsTests
