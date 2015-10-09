@@ -152,7 +152,7 @@ namespace Game.Core.Processes
     public bool ActivateChildOnAbort { get; set; }
 
     #endregion
-    #region State Check Properties
+    #region State Properties
 
     /// <summary>
     ///   Was the process initialized successfully.
@@ -189,8 +189,14 @@ namespace Game.Core.Processes
       get { return State == ProcessState.Paused; }
       set
       {
-        Debug.Assert(IsAlive);
-        Pause(value);
+        if (value)
+        {
+          Pause();
+        }
+        else
+        {
+          Resume();
+        }
       }
     }
 
@@ -236,15 +242,21 @@ namespace Game.Core.Processes
 
     /// <summary>
     ///   Attach a child to this process chain.  The process will be attached 
-    ///   to the first child which does not have a child process.
+    ///   to the first child which does not have a child process.  The process 
+    ///   must not be initialized.
     /// </summary>
     /// <param name="child"></param>
     /// <exception cref="ArgumentNullException">
     ///   child is null.
     /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   child is initialized.
+    /// </exception>
     public void AttachChild(ProcessBase child)
     {
       if (child == null) throw new ArgumentNullException("child");
+      if (child.IsInitialized) 
+        throw new InvalidOperationException("child can not be initialized");
 
       if (Child == null)
       {
@@ -272,7 +284,8 @@ namespace Game.Core.Processes
     #region State Control Methods
 
     /// <summary>
-    ///   Initializes a new process.
+    ///   Initializes a new process.  Depending on the value of BeginPaused,
+    ///   the process will go into either the Paused or Running state.
     /// </summary>
     /// <returns>
     ///   Success or failure of initialization.
@@ -293,7 +306,7 @@ namespace Game.Core.Processes
 
       if (BeginPaused)
       {
-        Pause(true);
+        Pause();
       }
 
       return true;
@@ -312,24 +325,6 @@ namespace Game.Core.Processes
 
       RunningTime += deltaTime;
       DoUpdate(deltaTime);
-    }
-
-    /// <summary>
-    ///   Pauses or resumes a process.
-    /// </summary>
-    /// <param name="paused">
-    ///   If true, pauses the process.  If false, resumes the process.
-    /// </param>
-    public void Pause(bool paused)
-    {
-      if (paused)
-      {
-        Pause();
-      }
-      else
-      {
-        Resume();
-      }
     }
 
     /// <summary>
@@ -402,7 +397,7 @@ namespace Game.Core.Processes
     public void Abort()
     {
       Log.VerboseFmt("{0} aborted", Name);
-      State = ProcessState.Failed;
+      State = ProcessState.Aborted;
       DoAbort();
       OnAborted();
     }
