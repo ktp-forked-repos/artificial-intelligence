@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Commont.Tests
+namespace Game.Core.Tests
 {
   [SetUpFixture]
   public class GlobalSetup

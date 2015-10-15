@@ -385,7 +385,7 @@ namespace Game.Core.Processes
     {
       Debug.Assert(IsAlive);
 
-      Log.VerboseFmt("{0} failed");
+      Log.VerboseFmt("{0} failed", Name);
       State = ProcessState.Failed;
       DoFail();
       OnFailed();

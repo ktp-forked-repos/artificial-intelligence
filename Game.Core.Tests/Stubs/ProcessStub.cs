@@ -2,11 +2,11 @@ using Game.Core.Processes;
 
 namespace Game.Core.Tests.Stubs
 {
-  internal sealed class StubProcess
+  internal sealed class ProcessStub
     : ProcessBase
   {
-    public StubProcess(int id = 1, bool initializationResult = true) 
-      : base(id, "StubProcess")
+    public ProcessStub(int id = 1, bool initializationResult = true) 
+      : base(id, "ProcessStub")
     {
       InitializationResult = initializationResult;
     }

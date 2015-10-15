@@ -83,7 +83,8 @@
     <Compile Include="GlobalSetup.cs" />
     <Compile Include="ProcessTests\ProcessBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Stubs\StubProcess.cs" />
+    <Compile Include="Stubs\EntityLifeCycleStub.cs" />
+    <Compile Include="Stubs\ProcessStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -94,6 +95,9 @@
       <Project>{F733DD0F-E0C4-408E-A7BF-9FCA91FB94C3}</Project>
       <Name>Game.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EntityTests\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

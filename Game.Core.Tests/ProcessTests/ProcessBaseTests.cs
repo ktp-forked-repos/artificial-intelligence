@@ -11,7 +11,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Initialize_Fails()
     {
-      var proc = new StubProcess(1, false);
+      var proc = new ProcessStub(1, false);
       var eventFired = false;
       proc.Initialized += (sender, args) => eventFired = true;
 
@@ -26,7 +26,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Initialize_Success_StartsRunning()
     {
-      var proc = new StubProcess {BeginPaused = false};
+      var proc = new ProcessStub {BeginPaused = false};
       var eventFired = false;
       proc.Initialized += (sender, args) => eventFired = true;
 
@@ -42,7 +42,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Initialize_Success_StartsPaused()
     {
-      var proc = new StubProcess { BeginPaused = true };
+      var proc = new ProcessStub { BeginPaused = true };
       var initializeEvent = false;
       proc.Initialized += (sender, args) => initializeEvent = true;
       var pausedEvent = false;
@@ -62,7 +62,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Update_CallsHandlers()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       proc.Initialize();
 
       proc.Update(1f);
@@ -74,7 +74,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Update_AccumulatesRunTime()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       proc.Initialize();
 
       proc.Update(1f);
@@ -87,7 +87,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Pause_DoesNothingIfPaused()
     {
-      var proc = new StubProcess {BeginPaused = true};
+      var proc = new ProcessStub {BeginPaused = true};
       var pauseEvent = false;
       proc.Initialize();
       proc.Paused += (sender, args) => pauseEvent = true;
@@ -102,7 +102,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Pause_Pauses()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var pauseEvent = false;
       proc.Paused += (sender, args) => pauseEvent = true;
       proc.Initialize();
@@ -117,7 +117,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Resume_DoesNothingIfRunning()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
       proc.Initialize();
@@ -132,7 +132,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Resume_Resumes()
     {
-      var proc = new StubProcess { BeginPaused = true };
+      var proc = new ProcessStub { BeginPaused = true };
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
       proc.Initialize();
@@ -147,7 +147,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Succeed_ChangesState()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var succeedEvent = false;
       proc.Succeeded += (sender, args) => succeedEvent = true;
       proc.Initialize();
@@ -163,7 +163,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Fail_ChangesState()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var failEvent = false;
       proc.Failed += (sender, args) => failEvent = true;
       proc.Initialize();
@@ -179,7 +179,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Abort_HandlesUninitializedState()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var abortEvent = false;
       proc.Aborted += (sender, args) => abortEvent = true;
 
@@ -194,7 +194,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Abort_HandlesInitializedState()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var abortEvent = false;
       proc.Aborted += (sender, args) => abortEvent = true;
       proc.Initialize();
@@ -210,7 +210,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AttachChild_HandlesNull()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
 
       TestDelegate func = () => proc.AttachChild(null);
 
@@ -220,8 +220,8 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AttachChild_RejectsInitializedChild()
     {
-      var proc = new StubProcess(1);
-      var child = new StubProcess(2);
+      var proc = new ProcessStub(1);
+      var child = new ProcessStub(2);
       child.Initialize();
       TestDelegate func = () => proc.AttachChild(child);
 
@@ -232,8 +232,8 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AttachChild_AddsFirstChild()
     {
-      var proc = new StubProcess(1);
-      var child = new StubProcess(2);
+      var proc = new ProcessStub(1);
+      var child = new ProcessStub(2);
 
       proc.AttachChild(child);
 
@@ -244,9 +244,9 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AttachChild_ChainsChildren()
     {
-      var proc = new StubProcess(1);
-      var child1 = new StubProcess(2);
-      var child2 = new StubProcess(3);
+      var proc = new ProcessStub(1);
+      var child1 = new ProcessStub(2);
+      var child2 = new ProcessStub(3);
 
       proc.AttachChild(child1);
       proc.AttachChild(child2);
@@ -260,7 +260,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void RemoveChild_HandlesNoChild()
     {
-      var proc = new StubProcess(1);
+      var proc = new ProcessStub(1);
 
       var result = proc.RemoveChild();
 
@@ -270,8 +270,8 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void RemoveChild_DetachesChild()
     {
-      var proc = new StubProcess(1);
-      var child = new StubProcess(2);
+      var proc = new ProcessStub(1);
+      var child = new ProcessStub(2);
       proc.AttachChild(child);
 
       var result = proc.RemoveChild();
@@ -283,7 +283,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AbortAll_HandlesNoChild()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var abortEvent = false;
       proc.Aborted += (sender, args) => abortEvent = true;
 
@@ -299,8 +299,8 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AbortAll_AbortsChild()
     {
-      var proc = new StubProcess(1);
-      var child = new StubProcess(2);
+      var proc = new ProcessStub(1);
+      var child = new ProcessStub(2);
       proc.AttachChild(child);
       var abortEvent = false;
       proc.Aborted += (sender, args) => abortEvent = true;
@@ -318,9 +318,9 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AbortAll_AbortsChain()
     {
-      var proc = new StubProcess(1);
-      var child1 = new StubProcess(2);
-      var child2 = new StubProcess(3);
+      var proc = new ProcessStub(1);
+      var child1 = new ProcessStub(2);
+      var child2 = new ProcessStub(3);
       proc.AttachChild(child1);
       proc.AttachChild(child2);
       var abortEvent = false;
@@ -340,7 +340,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void IsPaused_Setter_Pauses()
     {
-      var proc = new StubProcess();
+      var proc = new ProcessStub();
       var pauseEvent = false;
       proc.Paused += (sender, args) => pauseEvent = true;
       proc.Initialize();
@@ -355,7 +355,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void IsPaused_Setter_Resumes()
     {
-      var proc = new StubProcess { BeginPaused = true };
+      var proc = new ProcessStub { BeginPaused = true };
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
       proc.Initialize();
