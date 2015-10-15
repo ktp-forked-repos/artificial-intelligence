@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Game.Core
 {
@@ -167,7 +166,7 @@ namespace Game.Core
     }
 
     /// <summary>
-    ///   Destroys the entity.  Must be callable from any state
+    ///   Destroys the entity.  Must be callable from any state.
     /// </summary>
     public void Destroy()
     {
@@ -239,15 +238,10 @@ namespace Game.Core
     #region IDisposable
 
     /// <summary>
-    ///   Destroys, then disposes of the entity.
+    ///   Disposes of the entity's resources.  Does not change the entity state.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
     public void Dispose()
     {
-      if (!IsDestroyed)
-      {
-        Destroy();
-      }
       Dispose(true);
       GC.SuppressFinalize(this);
     }
