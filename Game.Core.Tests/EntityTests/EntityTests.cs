@@ -170,6 +170,18 @@ namespace Game.Core.Tests.EntityTests
     }
 
     [Test]
+    public void GetComponent_NotFound()
+    {
+      var entity = new Entity(1);
+      var component = new ComponentStub(entity);
+      entity.AddComponent(component);
+
+      var result = entity.GetComponent<UpdateComponentStub>();
+
+      Assert.IsNull(result);
+    }
+
+    [Test]
     public void GetComponent_FindsComponent()
     {
       var entity = new Entity(1);
@@ -405,6 +417,21 @@ namespace Game.Core.Tests.EntityTests
       Assert.AreEqual(time, component2.LastUpdateDeltaTime);
       Assert.AreEqual(1, component2.UpdateCallCount);
       Assert.AreEqual(time, component2.LastUpdateDeltaTime);
+    }
+
+    [Test]
+    public void Dispose_DisposesAllComponents()
+    {
+      var entity = new Entity(1);
+      var component1 = new ComponentStub(entity);
+      entity.AddComponent(component1);
+      var component2 = new UpdateComponentStub(entity);
+      entity.AddComponent(component2);
+
+      entity.Dispose();
+
+      Assert.AreEqual(1, component1.DisposeCallCount);
+      Assert.AreEqual(1, component2.DisposeCallCount);
     }
   }
 }
