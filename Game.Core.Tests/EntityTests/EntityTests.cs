@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Core.Components;
 using Game.Core.Tests.Stubs;
-using Moq;
 using NUnit.Framework;
 
 namespace Game.Core.Tests.EntityTests
@@ -39,6 +35,19 @@ namespace Game.Core.Tests.EntityTests
       TestDelegate func = () => entity.AddComponent(null);
 
       Assert.Throws<ArgumentNullException>(func);
+      Assert.AreEqual(0, entity.Components.Count());
+    }
+
+    [Test]
+    public void AddComponent_RejectsInitializedComponent()
+    {
+      var entity = new Entity(1);
+      var component = new ComponentStub(entity);
+      component.Initialize();
+
+      TestDelegate func = () => entity.AddComponent(component);
+
+      Assert.Throws<InvalidOperationException>(func);
       Assert.AreEqual(0, entity.Components.Count());
     }
 

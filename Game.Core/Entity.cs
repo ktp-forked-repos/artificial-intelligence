@@ -115,6 +115,8 @@ namespace Game.Core
     public void AddComponent(ComponentBase component)
     {
       if (component == null) throw new ArgumentNullException("component");
+      if (component.IsInitialized)
+        throw new InvalidOperationException("Can not add initialized component");
       if (IsInitialized)
         throw new InvalidOperationException(
           "Can not add components to an initialized entity");
