@@ -81,9 +81,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="EntityTests\EntityLifeCycleBaseTests.cs" />
+    <Compile Include="EntityTests\EntityTests.cs" />
     <Compile Include="GlobalSetup.cs" />
     <Compile Include="ProcessTests\ProcessBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stubs\ComponentStub.cs" />
     <Compile Include="Stubs\EntityLifeCycleStub.cs" />
     <Compile Include="Stubs\ProcessStub.cs" />
   </ItemGroup>

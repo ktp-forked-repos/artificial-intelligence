@@ -31,6 +31,7 @@ namespace Game.Core.Components
       if (parent == null) throw new ArgumentNullException("parent");
 
       Parent = parent;
+      NeedsUpdate = false;
     }
 
     /// <summary>

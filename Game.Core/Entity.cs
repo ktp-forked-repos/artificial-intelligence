@@ -90,6 +90,14 @@ namespace Game.Core
     #region Component Accessors
 
     /// <summary>
+    ///   Gets the components in the entity.
+    /// </summary>
+    public IEnumerable<ComponentBase> Components
+    {
+      get { return m_components.Values; }
+    }
+
+    /// <summary>
     ///   Adds a component to the entity.  Components must be added before
     ///   initialization.
     /// </summary>
@@ -98,23 +106,25 @@ namespace Game.Core
     ///   component is null.
     /// </exception>
     /// <exception cref="InvalidOperationException">
+    ///   The entity is already initialized.
+    ///   -or-
+    ///   The entity's parent is not this entity.
+    ///   -or-
     ///   The entity already has a component with the same type.
     /// </exception>
     public void AddComponent(ComponentBase component)
     {
       if (component == null) throw new ArgumentNullException("component");
+      if (IsInitialized)
+        throw new InvalidOperationException(
+          "Can not add components to an initialized entity");
+      if (!ReferenceEquals(this, component.Parent))
+        throw new InvalidOperationException(string.Format(
+          "Tried to add component to entity {0} but its parent is {1}",
+          Name, component.Parent.Name));
       if (m_components.ContainsKey(component.GetType()))
         throw new InvalidOperationException(
           "Duplicate component " + component.GetType().Name);
-
-      Debug.Assert(!IsInitialized);
-      Debug.Assert(component.Parent.Id == Id);
-
-      if (component.NeedsUpdate)
-      {
-        m_updateComponents.Add(component);
-        NeedsUpdate = true;
-      }
 
       m_components.Add(component.GetType(), component);
       Log.VerboseFmt("{0} added {1}", Name, component.GetType().Name);
@@ -188,6 +198,9 @@ namespace Game.Core
 
     protected override bool DoInitialize()
     {
+      if (!m_components.Any()) 
+        throw new InvalidOperationException("The entity has no components");
+
       var transforms = GetComponentsByBase<TransformComponentBase>();
       if (transforms.Count > 1)
       {
@@ -198,8 +211,9 @@ namespace Game.Core
         {
           sb.Append(transform.GetType().FullName).Append(", ");
         }
-        Log.Error(sb);
-        return false;
+        var msg = sb.ToString();
+        Log.Error(msg);
+        throw new InvalidOperationException(msg);
       }
       else if (transforms.Count == 0)
       {
@@ -217,12 +231,13 @@ namespace Game.Core
         {
           Log.ErrorFmt("Failed to initialize {0} in {1}",
             component.GetType().Name, Name);
-          Dispose();
+          Destroy();
           return false;
         }
 
         if (component.NeedsUpdate)
         {
+          NeedsUpdate = true;
           m_updateComponents.Add(component);
         }
       }
