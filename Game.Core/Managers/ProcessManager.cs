@@ -147,7 +147,7 @@ namespace Game.Core.Managers
 
       if (!child.IsInitialized && !child.Initialize())
       {
-        Log.ErrorFmt("{0}, child of {1} was not initialized and failed to " +
+        Log.ErrorFmt("{0}, child of {1}, was not initialized and failed to " +
                      "initialize, aborting its chain", child.Name, process.Name);
         child.AbortAll();
         return;
