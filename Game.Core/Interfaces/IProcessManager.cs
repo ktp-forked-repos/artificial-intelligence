@@ -16,6 +16,12 @@ namespace Game.Core.Interfaces
     : IManager
   {
     /// <summary>
+    ///   Gets all current processes in the manager.  Does not include child
+    ///   processes that are still attached to their parent.
+    /// </summary>
+    IReadOnlyCollection<ProcessBase> Processes { get; }
+
+      /// <summary>
     ///   Get a process by its id.
     /// </summary>
     /// <param name="id"></param>
@@ -41,6 +47,8 @@ namespace Game.Core.Interfaces
     /// </exception>
     /// <exception cref="InvalidOperationException">
     ///   process does not have a unique id.
+    ///   -or-
+    ///   process is not initialized.
     /// </exception>
     void AddProcess(ProcessBase process);
   }

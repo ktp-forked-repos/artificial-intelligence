@@ -2,16 +2,17 @@ using Game.Core.Processes;
 
 namespace Game.Core.Tests.Stubs
 {
-  internal sealed class ProcessStub
+  internal class ProcessStub
     : ProcessBase
   {
-    public ProcessStub(int id = 1, bool initializationResult = true) 
+    public ProcessStub(int id, bool initializationResult = true) 
       : base(id, "ProcessStub")
     {
       InitializationResult = initializationResult;
     }
 
     public bool InitializationResult { get; private set; }
+    public float LastUpdateDeltaTime { get; private set; }
 
     public int DoInitializeCallCount { get; private set; }
     public int DoUpdateCallCount { get; private set; }
@@ -29,6 +30,7 @@ namespace Game.Core.Tests.Stubs
 
     protected override void DoUpdate(float deltaTime)
     {
+      LastUpdateDeltaTime = deltaTime;
       DoUpdateCallCount++;
     }
 

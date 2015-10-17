@@ -23,7 +23,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Initialize_Success()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
 
       var result = proc.Initialize();
 
@@ -36,7 +36,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Update_CallsHandlers()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       proc.Initialize();
       proc.Resume();
 
@@ -49,7 +49,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Update_AccumulatesRunTime()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       proc.Initialize();
       proc.Resume();
 
@@ -63,7 +63,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Pause_DoesNothingIfPaused()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var pauseEvent = false;
       proc.Initialize();
       proc.Paused += (sender, args) => pauseEvent = true;
@@ -78,7 +78,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Pause_Pauses()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var pauseEvent = false;
       proc.Paused += (sender, args) => pauseEvent = true;
       proc.Initialize();
@@ -94,7 +94,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Resume_DoesNothingIfRunning()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       proc.Initialize();
       proc.Resume();
       var resumeEvent = false;
@@ -110,7 +110,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Resume_Resumes()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
       proc.Initialize();
@@ -125,7 +125,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Succeed_ChangesState()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var succeedEvent = false;
       proc.Succeeded += (sender, args) => succeedEvent = true;
       proc.Initialize();
@@ -141,7 +141,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Fail_ChangesState()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var failEvent = false;
       proc.Failed += (sender, args) => failEvent = true;
       proc.Initialize();
@@ -157,7 +157,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Abort_HandlesUninitializedState()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var abortEvent = false;
       proc.Aborted += (sender, args) => abortEvent = true;
 
@@ -172,7 +172,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Abort_HandlesInitializedState()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var abortEvent = false;
       proc.Aborted += (sender, args) => abortEvent = true;
       proc.Initialize();
@@ -188,7 +188,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AttachChild_HandlesNull()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
 
       TestDelegate func = () => proc.AttachChild(null);
 
@@ -261,7 +261,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void AbortAll_HandlesNoChild()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var abortEvent = false;
       proc.Aborted += (sender, args) => abortEvent = true;
 
@@ -318,7 +318,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void IsPaused_Setter_Pauses()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var pauseEvent = false;
       proc.Paused += (sender, args) => pauseEvent = true;
       proc.Initialize();
@@ -334,7 +334,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void IsPaused_Setter_Resumes()
     {
-      var proc = new ProcessStub();
+      var proc = new ProcessStub(1);
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
       proc.Initialize();

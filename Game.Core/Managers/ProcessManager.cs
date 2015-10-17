@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Common.Extensions;
@@ -22,8 +21,6 @@ namespace Game.Core.Managers
       MethodBase.GetCurrentMethod().DeclaringType);
 
     private readonly List<ProcessBase> m_processes = 
-      new List<ProcessBase>(InitialListSize);
-    private readonly List<ProcessBase> m_toAdd = 
       new List<ProcessBase>(InitialListSize);
     private readonly List<int> m_toRemove = new List<int>(InitialListSize);
 
@@ -55,9 +52,21 @@ namespace Game.Core.Managers
         return;
       }
 
-      ProcessPendingRemoves();
-      ProcessPendingAdds();
-      UpdateProcesses(deltaTime);
+      if (m_toRemove.Any())
+      {
+        var notRemoved = m_processes.RemoveAllItems(m_toRemove,
+        (process, id) => process.Id == id);
+        Log.ErrorFmtIf(notRemoved.Any(),
+          "Process ids were slated for removal but not removed: {0}",
+          string.Join(",", notRemoved));
+        m_toRemove.Clear();
+      }
+
+      var runningProcesses = m_processes.Where(p => p.IsRunning);
+      foreach (var process in runningProcesses)
+      {
+        process.Update(deltaTime);
+      }
     }
 
     public void Shutdown()
@@ -67,11 +76,18 @@ namespace Game.Core.Managers
         process.AbortAll();
       }
 
+      Log.DebugFmt("Aborted {0} process chains during shutdown", 
+        m_processes.Count);
       m_processes.Clear();
     }
 
     #endregion
     #region IProcessManager
+
+    public IReadOnlyCollection<ProcessBase> Processes
+    {
+      get { return m_processes; }
+    }
 
     public ProcessBase GetProcess(int id)
     {
@@ -90,73 +106,80 @@ namespace Game.Core.Managers
       if (m_processes.Any(p => p.Id == process.Id))
         throw new InvalidOperationException(string.Format(
           "Process id {0} is already in use", process.Id));
+      if (!process.IsInitialized)
+        throw new InvalidOperationException("process is not initialized");
 
-      Debug.Assert(process.IsInitialized);
+      process.Succeeded += HandleProcessSucceeded;
+      process.Failed += HandleProcessFailed;
+      process.Aborted += HandleProcessAborted;
+
       m_processes.Add(process);
       Log.VerboseFmt("Added {0}", process.Name);
     }
-
+    
     #endregion
 
-    private void UpdateProcesses(float deltaTime)
+    private void RemoveProcess(ProcessBase process)
     {
-      foreach (var process in m_processes)
-      {
-        switch (process.State)
-        {
-          case ProcessState.NotInitialized:
-          case ProcessState.Paused:
-            // intentionally empty
-            break;
+      process.Succeeded -= HandleProcessSucceeded;
+      process.Failed -= HandleProcessFailed;
+      process.Aborted -= HandleProcessAborted;
 
-          case ProcessState.Running:
-            process.Update(deltaTime);
-            break;
-            
-          case ProcessState.Succeeded:
-          case ProcessState.Failed:
-          case ProcessState.Aborted:
-            var activateChild = process.HasSucceeded ||
-                                process.ActivateChildOnFailure ||
-                                process.ActivateChildOnAbort;
-            if (activateChild && process.Child != null)
-            {
-              var child = process.RemoveChild();
-              Log.VerboseFmt("Activating {0}, child of {1}", child.Name,
-                process.Name);
-              m_toAdd.Add(child);
-            }
-            m_toRemove.Add(process.Id);
-            break;
+      m_toRemove.Add(process.Id);
+      Log.VerboseFmt("Flagged process {0} for removal", process.Name);
 
-          default:
-            throw new ArgumentOutOfRangeException();
-        }
-      }
-    }
-
-    private void ProcessPendingAdds()
-    {
-      if (m_toAdd.Count == 0)
+      if (process.Child == null)
       {
         return;
       }
 
-      m_processes.AddRange(m_toAdd);
-      m_toAdd.Clear();
-    }
-
-    private void ProcessPendingRemoves()
-    {
-      if (m_toRemove.Count == 0)
+      var activateChild = process.HasSucceeded ||
+                          process.ActivateChildOnFailure ||
+                          process.ActivateChildOnAbort;
+      var child = process.RemoveChild();
+      if (!activateChild)
       {
+        Log.DebugFmt("Children of {0} are not activating, aborting them",
+          process.Name);
+        child.AbortAll();
         return;
       }
 
-      var remaining = m_processes.RemoveAllItems(m_toRemove, 
-        (process, id) => process.Id == id);
-      Debug.Assert(!remaining.Any());
-      m_toRemove.Clear();
+      if (!child.IsInitialized && !child.Initialize())
+      {
+        Log.ErrorFmt("{0}, child of {1} was not initialized and failed to " +
+                     "initialize, aborting its chain", child.Name, process.Name);
+        child.AbortAll();
+        return;
+      }
+
+      child.Succeeded += HandleProcessSucceeded;
+      child.Failed += HandleProcessFailed;
+      child.Aborted += HandleProcessAborted;
+      m_processes.Add(child);
+      child.Resume();
     }
+
+    #region Event Handlers
+
+    private void HandleProcessSucceeded(object sender, EventArgs eventArgs)
+    {
+      var process = (ProcessBase) sender;
+      RemoveProcess(process);
+    }
+
+    private void HandleProcessFailed(object sender, EventArgs eventArgs)
+    {
+      var process = (ProcessBase)sender;
+      RemoveProcess(process);
+    }
+
+    private void HandleProcessAborted(object sender, EventArgs eventArgs)
+    {
+      var process = (ProcessBase)sender;
+      RemoveProcess(process);
+    }
+
+    #endregion
   }
 }

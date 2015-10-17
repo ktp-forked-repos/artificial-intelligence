@@ -24,7 +24,7 @@ namespace Common.Extensions
     /// <exception cref="ArgumentNullException">
     ///   toRemove is null.
     /// </exception>
-    public static IEnumerable<T> RemoveAllItems<T>(this IList<T> list,
+    public static ICollection<T> RemoveAllItems<T>(this IList<T> list,
       IEnumerable<T> toRemove)
     {
       return list.RemoveAllItems(toRemove, (a, b) => a.Equals(b));
@@ -54,7 +54,7 @@ namespace Common.Extensions
     ///   -or-
     ///   comparer is null.
     /// </exception>
-    public static IEnumerable<T> RemoveAllItems<T>(this IList<T> list,
+    public static ICollection<T> RemoveAllItems<T>(this IList<T> list,
       IEnumerable<T> toRemove, IComparer<T> comparer)
     {
       if (comparer == null) throw new ArgumentNullException("comparer");
@@ -92,7 +92,7 @@ namespace Common.Extensions
     ///   -or-
     ///   compareFunc is null.
     /// </exception>
-    public static IEnumerable<TRemovalItemType> 
+    public static ICollection<TRemovalItemType> 
       RemoveAllItems<TItemType, TRemovalItemType>(this IList<TItemType> list, 
         IEnumerable<TRemovalItemType> toRemove, 
         Func<TItemType, TRemovalItemType, bool> compareFunc)
