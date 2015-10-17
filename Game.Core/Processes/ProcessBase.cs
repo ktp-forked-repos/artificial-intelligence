@@ -62,18 +62,12 @@ namespace Game.Core.Processes
       Name = string.Format("{0} {1}{2}", GetType().Name, Id,
         string.IsNullOrEmpty(name) ? string.Empty : ": " + name);
       State = ProcessState.NotInitialized;
-      BeginPaused = false;
       ActivateChildOnFailure = false;
       ActivateChildOnAbort = false;
     }
 
     #region Events
-
-    /// <summary>
-    ///   Event fires when the process successfully initializes.
-    /// </summary>
-    public event EventHandler Initialized;
-
+    
     /// <summary>
     ///   Event fires when the process transitions from Running -> Paused.
     /// </summary>
@@ -121,14 +115,7 @@ namespace Game.Core.Processes
     ///   The current state of the process.
     /// </summary>
     public ProcessState State { get; private set; }
-
-    /// <summary>
-    ///   If true the process is paused immediately after initialization.
-    /// 
-    ///   Default: false.
-    /// </summary>
-    public bool BeginPaused { get; set; }
-
+    
     /// <summary>
     ///   The child of this process, which will be activated if this process
     ///   completes successfully, and possibly if it fails or aborts, depending 
@@ -284,8 +271,7 @@ namespace Game.Core.Processes
     #region State Control Methods
 
     /// <summary>
-    ///   Initializes a new process.  Depending on the value of BeginPaused,
-    ///   the process will go into either the Paused or Running state.
+    ///   Initializes a new process to the paused state.
     /// </summary>
     /// <returns>
     ///   Success or failure of initialization.
@@ -301,13 +287,7 @@ namespace Game.Core.Processes
       }
 
       Log.VerboseFmt("{0} initialized", Name);
-      State = ProcessState.Running;
-      OnInitialized();
-
-      if (BeginPaused)
-      {
-        Pause();
-      }
+      State = ProcessState.Paused;
 
       return true;
     }
@@ -462,15 +442,7 @@ namespace Game.Core.Processes
     protected abstract void DoAbort();
 
     #region Event Invokers
-
-    private void OnInitialized()
-    {
-      if (Initialized != null)
-      {
-        Initialized(this, EventArgs.Empty);
-      }
-    }
-
+    
     private void OnPaused()
     {
       if (Paused != null)

@@ -12,49 +12,23 @@ namespace Game.Core.Tests.ProcessTests
     public void Initialize_Fails()
     {
       var proc = new ProcessStub(1, false);
-      var eventFired = false;
-      proc.Initialized += (sender, args) => eventFired = true;
 
       var result = proc.Initialize();
 
       Assert.IsFalse(result);
-      Assert.IsFalse(eventFired);
       Assert.AreEqual(1, proc.DoInitializeCallCount);
       Assert.IsFalse(proc.IsInitialized);
     }
 
     [Test]
-    public void Initialize_Success_StartsRunning()
+    public void Initialize_Success()
     {
-      var proc = new ProcessStub {BeginPaused = false};
-      var eventFired = false;
-      proc.Initialized += (sender, args) => eventFired = true;
+      var proc = new ProcessStub();
 
       var result = proc.Initialize();
 
       Assert.IsTrue(result);
-      Assert.IsTrue(eventFired);
       Assert.AreEqual(1, proc.DoInitializeCallCount);
-      Assert.IsTrue(proc.IsInitialized);
-      Assert.IsTrue(proc.IsRunning);
-    }
-
-    [Test]
-    public void Initialize_Success_StartsPaused()
-    {
-      var proc = new ProcessStub { BeginPaused = true };
-      var initializeEvent = false;
-      proc.Initialized += (sender, args) => initializeEvent = true;
-      var pausedEvent = false;
-      proc.Paused += (sender, args) => pausedEvent = true;
-
-      var result = proc.Initialize();
-
-      Assert.IsTrue(result);
-      Assert.IsTrue(initializeEvent);
-      Assert.AreEqual(1, proc.DoInitializeCallCount);
-      Assert.IsTrue(pausedEvent);
-      Assert.AreEqual(1, proc.DoPauseCallCount);
       Assert.IsTrue(proc.IsInitialized);
       Assert.IsTrue(proc.IsPaused);
     }
@@ -64,6 +38,7 @@ namespace Game.Core.Tests.ProcessTests
     {
       var proc = new ProcessStub();
       proc.Initialize();
+      proc.Resume();
 
       proc.Update(1f);
 
@@ -76,6 +51,7 @@ namespace Game.Core.Tests.ProcessTests
     {
       var proc = new ProcessStub();
       proc.Initialize();
+      proc.Resume();
 
       proc.Update(1f);
       proc.Update(1f);
@@ -87,14 +63,14 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Pause_DoesNothingIfPaused()
     {
-      var proc = new ProcessStub {BeginPaused = true};
+      var proc = new ProcessStub();
       var pauseEvent = false;
       proc.Initialize();
       proc.Paused += (sender, args) => pauseEvent = true;
 
       proc.Pause();
 
-      Assert.AreEqual(1, proc.DoPauseCallCount); // 1 startup pause
+      Assert.AreEqual(0, proc.DoPauseCallCount);
       Assert.IsFalse(pauseEvent);
       Assert.IsTrue(proc.IsPaused);
     }
@@ -106,6 +82,7 @@ namespace Game.Core.Tests.ProcessTests
       var pauseEvent = false;
       proc.Paused += (sender, args) => pauseEvent = true;
       proc.Initialize();
+      proc.Resume();
 
       proc.Pause();
 
@@ -118,13 +95,14 @@ namespace Game.Core.Tests.ProcessTests
     public void Resume_DoesNothingIfRunning()
     {
       var proc = new ProcessStub();
+      proc.Initialize();
+      proc.Resume();
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
-      proc.Initialize();
 
       proc.Resume();
 
-      Assert.AreEqual(0, proc.DoResumeCallCount);
+      Assert.AreEqual(1, proc.DoResumeCallCount); // one call to start running
       Assert.IsFalse(resumeEvent);
       Assert.IsTrue(proc.IsRunning);
     }
@@ -132,7 +110,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void Resume_Resumes()
     {
-      var proc = new ProcessStub { BeginPaused = true };
+      var proc = new ProcessStub();
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
       proc.Initialize();
@@ -344,6 +322,7 @@ namespace Game.Core.Tests.ProcessTests
       var pauseEvent = false;
       proc.Paused += (sender, args) => pauseEvent = true;
       proc.Initialize();
+      proc.Resume();
 
       proc.IsPaused = true;
 
@@ -355,7 +334,7 @@ namespace Game.Core.Tests.ProcessTests
     [Test]
     public void IsPaused_Setter_Resumes()
     {
-      var proc = new ProcessStub { BeginPaused = true };
+      var proc = new ProcessStub();
       var resumeEvent = false;
       proc.Resumed += (sender, args) => resumeEvent = true;
       proc.Initialize();
