@@ -80,7 +80,7 @@ namespace Game.Core.Managers
       {
         if (m_eventDispatchTimer.Elapsed.TotalSeconds >= maxTime)
         {
-          Log.VerboseFmt("Processing aborted with {0} events in the queue",
+          Log.WarnFmt("Processing aborted with {0} events in the queue",
             ReadQueue.Count);
 
           WriteQueue.InsertRange(0, ReadQueue);
@@ -100,10 +100,31 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
+      m_listeners.Clear();
+      ReadQueue.Clear();
+      WriteQueue.Clear();
     }
 
     #endregion
     #region IEventManager
+
+    public IReadOnlyCollection<EventBase> PendingEvents
+    {
+      get { return WriteQueue; }
+    }
+
+    public int GetListenerCount<T>()
+      where T : EventBase
+    {
+      var type = typeof (T);
+      Action<EventBase> listeners;
+      if (m_listeners.TryGetValue(type, out listeners) && listeners != null)
+      {
+        return listeners.GetInvocationList().Count();
+      }
+
+      return 0;
+    }
 
     public void AddListener<T>(Action<EventBase> listener) 
       where T : EventBase
@@ -168,7 +189,7 @@ namespace Game.Core.Managers
       where T : EventBase
     {
       var type = typeof(T);
-      var toRemove = WriteQueue.First(e => e.GetType() == type);
+      var toRemove = WriteQueue.FirstOrDefault(e => e.GetType() == type);
       if (toRemove == null)
       {
         return false;
@@ -179,7 +200,8 @@ namespace Game.Core.Managers
       return true;
     }
 
-    public int AbortEvents<T>() where T : EventBase
+    public int AbortEvents<T>() 
+      where T : EventBase
     {
       var type = typeof(T);
       var count = WriteQueue.RemoveAll(e => e.GetType() == type);

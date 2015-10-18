@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Game.Core.Events;
 
 namespace Game.Core.Interfaces
@@ -9,6 +10,19 @@ namespace Game.Core.Interfaces
   public interface IEventManager
     : IManager
   {
+    /// <summary>
+    ///   Events that are pending and have not been fired yet.
+    /// </summary>
+    IReadOnlyCollection<EventBase> PendingEvents { get; }
+
+    /// <summary>
+    ///   Gets the number of listeners registered for type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    int GetListenerCount<T>()
+      where T : EventBase;
+
     /// <summary>
     ///   Adds a listener for event type T.
     /// </summary>
