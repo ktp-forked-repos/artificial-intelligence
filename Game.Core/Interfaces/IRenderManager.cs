@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SFML.Graphics;
 
 namespace Game.Core.Interfaces
@@ -9,6 +10,30 @@ namespace Game.Core.Interfaces
   public interface IRenderManager
     : IManager
   {
+    /// <summary>
+    ///   The frame rate that the manager will attempt to maintain.  Must be 
+    ///   a positive value.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   The value is zero or negative.
+    /// </exception>
+    int TargetFrameRate { get; set; }
+
+    /// <summary>
+    ///   The time interval after which the manager renders a frame.
+    /// </summary>
+    float UpdateInterval { get; }
+
+    /// <summary>
+    ///   The color the render target is cleared to before rendering a frame.
+    /// </summary>
+    Color BackgroundColor { get; set; }
+
+    /// <summary>
+    ///   Current renderable objects in the manager.
+    /// </summary>
+    IReadOnlyCollection<IRenderable> Renderables { get; }
+
     /// <summary>
     ///   Draws all renderable objects to the render target.
     /// </summary>

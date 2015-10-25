@@ -190,7 +190,7 @@ namespace Game.Core
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public IReadOnlyList<T> GetComponentsByBase<T>()
-      where T : ComponentBase
+      where T : class
     {
       return m_components.Values.OfType<T>().ToList();
     }

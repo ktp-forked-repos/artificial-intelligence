@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Common.Extensions;
-using Game.Core.Components;
 using Game.Core.Events;
 using Game.Core.Events.EntityEvents;
 using Game.Core.Interfaces;
+using Game.Core.SFML;
 using log4net;
 using SFML.Graphics;
 
@@ -15,36 +14,34 @@ namespace Game.Core.Managers
 {
   /// <summary>
   ///   The general render manager implementation.  Renders to a SFML 
-  ///   RenderWindow
+  ///   RenderTarget;
   /// </summary>
   public sealed class RenderManager
     : IRenderManager
   {
-    private const int TargetFrameRate = 60;
-    private const float UpdateInterval = 1f / TargetFrameRate;
+    public const int DefaultFrameRate = 60;
     private const int InitialListSize = 10;
 
     private static readonly ILog Log = LogManager.GetLogger(
       MethodBase.GetCurrentMethod().DeclaringType);
-    private static readonly Color ClearColor = Color.White;
+    public static readonly Color DefaultBackgroundColor = Color.White;
 
     // dependencies
     private readonly IEntityManager m_entityManager;
     private readonly IEventManager m_eventManager;
-    private readonly RenderWindow m_window;
+    private readonly IRenderWindow m_renderWindow;
     
     private readonly List<IRenderable> m_renderables = 
       new List<IRenderable>(InitialListSize);
-    private readonly List<int> m_toRemove = 
-      new List<int>(InitialListSize); 
     private bool m_stateChanged = false;
     private float m_timeSinceLastRender = 0f;
-    private int m_nextId = 1;
+    private int m_nextRenderId = 1;
+    private int m_targetFrameRate;
 
     // renderables with the default id of 0 get an id from this
-    private int NextId
+    private int NextRenderId
     {
-      get { return m_nextId++; }
+      get { return m_nextRenderId++; }
     }
 
     /// <summary>
@@ -52,26 +49,29 @@ namespace Game.Core.Managers
     /// </summary>
     /// <param name="entityManager"></param>
     /// <param name="eventManager"></param>
-    /// <param name="window"></param>
+    /// <param name="renderWindow"></param>
     /// <exception cref="ArgumentNullException">
     ///   entityManager is null.
     ///   -or-
     ///   eventManager is null.
     ///   -or-
-    ///   window is null.
+    ///   renderWindow is null.
     /// </exception>
     public RenderManager(IEntityManager entityManager, 
-      IEventManager eventManager, RenderWindow window)
+      IEventManager eventManager, IRenderWindow renderWindow)
     {
       if (entityManager == null) 
         throw new ArgumentNullException("entityManager");
       if (eventManager == null) throw new ArgumentNullException("eventManager");
-      if (window == null) throw new ArgumentNullException("window");
+      if (renderWindow == null) throw new ArgumentNullException("renderWindow");
 
       m_entityManager = entityManager;
       m_eventManager = eventManager;
-      m_window = window;
+      m_renderWindow = renderWindow;
+
       CanPause = true;
+      TargetFrameRate = DefaultFrameRate;
+      BackgroundColor = DefaultBackgroundColor;
     }
 
     #region IManager
@@ -105,8 +105,8 @@ namespace Game.Core.Managers
       }
 
       m_timeSinceLastRender -= UpdateInterval;
-      DrawOneFrame(m_window);
-      m_window.Display();
+      DrawOneFrame(m_renderWindow);
+      m_renderWindow.Display();
     }
 
     public void Shutdown()
@@ -117,18 +117,38 @@ namespace Game.Core.Managers
     #endregion
     #region IRenderManager
 
+    public int TargetFrameRate
+    {
+      get { return m_targetFrameRate; }
+      set
+      {
+        if (value < 1) throw new ArgumentOutOfRangeException("value");
+
+        m_targetFrameRate = value;
+        UpdateInterval = 1f / value;
+      }
+    }
+
+    public float UpdateInterval { get; private set; }
+
+    public Color BackgroundColor { get; set; }
+
+    public IReadOnlyCollection<IRenderable> Renderables
+    {
+      get { return m_renderables; }
+    }
+
     public void DrawOneFrame(RenderTarget target)
     {
       if (target == null) throw new ArgumentNullException("target");
 
       if (m_stateChanged)
       {
-        ProcessPendingRemovals();
         m_renderables.Sort();
         m_stateChanged = false;
       }
 
-      target.Clear(ClearColor);
+      target.Clear(BackgroundColor);
       foreach (var renderable in m_renderables)
       {
         renderable.Draw(target);
@@ -138,13 +158,14 @@ namespace Game.Core.Managers
     public void AddRenderable(IRenderable renderable)
     {
       if (renderable == null) throw new ArgumentNullException("renderable");
-      if (renderable.RenderId != 0 && m_renderables.Any(r => r.RenderId == renderable.RenderId))
+      if (renderable.RenderId != 0 && 
+          m_renderables.Any(r => r.RenderId == renderable.RenderId))
         throw new InvalidOperationException(string.Format(
           "IRenderable {0} is already tracked", renderable.RenderId));
 
       if (renderable.RenderId == 0)
       {
-        renderable.RenderId = NextId;
+        renderable.RenderId = NextRenderId;
       }
 
       m_renderables.Add(renderable);
@@ -155,23 +176,36 @@ namespace Game.Core.Managers
     {
       if (renderable == null) throw new ArgumentNullException("renderable");
 
-      m_toRemove.Add(renderable.RenderId);
-      m_stateChanged = true;
+      // removal doesn't reorder, so doesn't count as a state change
+      m_renderables.Remove(renderable);
     }
 
     #endregion
 
-    private void ProcessPendingRemovals()
+    private void AddRenderablesFromEntity(Entity entity)
     {
-      if (m_toRemove.Count == 0)
+      var components = entity.GetComponentsByBase<IRenderable>();
+      foreach (var component in components)
       {
-        return;
+        AddRenderable(component);
       }
 
-      var remaining = m_renderables.RemoveAllItems(m_toRemove,
-        (renderable, id) => renderable.RenderId == id);
-      Debug.Assert(!remaining.Any());
-      m_toRemove.Clear();
+      Log.DebugFmtIf(components.Count > 0,
+        "Added {0} IRenderables from {1}", components.Count, entity.Name);
+    }
+
+    private void RemoveRenderablesFromEntity(Entity entity)
+    {
+      var components = entity.GetComponentsByBase<IRenderable>();
+      var notFound = m_renderables.RemoveAllItems(components,
+            (r1, r2) => r1.RenderId == r2.RenderId);
+      // a destroyed entity may have already had its renderables removed
+      Log.ErrorFmtIf(notFound.Any() && !entity.IsDestroyed,
+        "Components not found during removal: {0}",
+        string.Join(",", notFound));
+
+      Log.DebugFmtIf(components.Count > 0,
+        "Removed {0} IRenderables from {1}", components.Count, entity.Name);
     }
 
     #region Event Handlers
@@ -180,45 +214,42 @@ namespace Game.Core.Managers
     {
       var evt = (EntityAddedEvent) e;
       Entity entity;
-      if (m_entityManager.TryGetEntity(evt.EntityId, out entity))
+      if (!m_entityManager.TryGetEntity(evt.EntityId, out entity))
       {
         Log.ErrorFmt("Entity {0} not found", evt.EntityId);
         return;
       }
 
-      var components = entity.GetComponentsByBase<RenderComponentBase>();
-      foreach (var component in components)
+      entity.Activated += HandleEntityActivated;
+      entity.DeActivated += HandleEntityDeActivated;
+      entity.Destroyed += HandleEntityDestroyed;
+
+      if (entity.IsActive)
       {
-        component.Activated += HandleComponentActivated;
-        component.DeActivated += HandleComponentDeActivated;
-        component.Destroyed += HandleComponentDestroyed;
-
-        if (component.IsActive)
-        {
-          AddRenderable(component);
-        }
+        AddRenderablesFromEntity(entity);
       }
-
-      Log.VerboseFmtIf(components.Count > 0,
-        "Tracking {0} IRenderables from {1}", components.Count, entity.Name);
     }
 
-    private void HandleComponentActivated(object sender, EventArgs e)
+    private void HandleEntityActivated(object sender, EventArgs e)
     {
-      var renderable = (IRenderable) sender;
-      AddRenderable(renderable);
+      var entity = (Entity)sender;
+      AddRenderablesFromEntity(entity);
     }
 
-    private void HandleComponentDeActivated(object sender, EventArgs e)
+    private void HandleEntityDeActivated(object sender, EventArgs e)
     {
-      var renderable = (IRenderable) sender;
-      RemoveRenderable(renderable);
+      var entity = (Entity)sender;
+      RemoveRenderablesFromEntity(entity);
     }
 
-    private void HandleComponentDestroyed(object sender, EventArgs e)
+    private void HandleEntityDestroyed(object sender, EventArgs e)
     {
-      var renderable = (IRenderable) sender;
-      RemoveRenderable(renderable);
+      var entity = (Entity)sender;
+      RemoveRenderablesFromEntity(entity);
+
+      entity.Activated -= HandleEntityActivated;
+      entity.DeActivated -= HandleEntityDeActivated;
+      entity.Destroyed -= HandleEntityDestroyed;
     }
 
     #endregion

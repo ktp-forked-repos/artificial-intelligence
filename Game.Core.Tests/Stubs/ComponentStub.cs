@@ -1,5 +1,8 @@
 ﻿using Game.Core.Components;
+using Game.Core.Interfaces;
 using Microsoft.Xna.Framework;
+using Moq;
+using SFML.Graphics;
 
 namespace Game.Core.Tests.Stubs
 {
@@ -31,21 +34,24 @@ namespace Game.Core.Tests.Stubs
     protected override bool DoInitialize()
     {
       DoInitializeCallCount++;
-      return InitializationResult;
+      return base.DoInitialize() && InitializationResult;
     }
 
     protected override void DoActivate()
     {
+      base.DoActivate();
       DoActivateCallCount++;
     }
 
     protected override void DoDeactivate()
     {
+      base.DoDeactivate();
       DoDeactivateCallCount++;
     }
 
     protected override void DoDestroy()
     {
+      base.DoDestroy();
       DoDestroyCallCount++;
     }
 
@@ -93,21 +99,24 @@ namespace Game.Core.Tests.Stubs
     protected override bool DoInitialize()
     {
       DoInitializeCallCount++;
-      return InitializationResult;
+      return base.DoInitialize() && InitializationResult;
     }
 
     protected override void DoActivate()
     {
+      base.DoActivate();
       DoActivateCallCount++;
     }
 
     protected override void DoDeactivate()
     {
+      base.DoDeactivate();
       DoDeactivateCallCount++;
     }
 
     protected override void DoDestroy()
     {
+      base.DoDestroy();
       DoDestroyCallCount++;
     }
 
@@ -119,5 +128,39 @@ namespace Game.Core.Tests.Stubs
     public override Vector2 Position { get; set; }
 
     public override float Rotation { get; set; }
+  }
+
+  internal class RenderComponentStub
+    : ComponentStub, IRenderable
+  {
+    public RenderComponentStub(Entity parent, bool initializationResult = true) 
+      : base(parent, initializationResult)
+    {
+      RenderDepth = 1;
+    }
+
+    public int CompareTo(IRenderable other)
+    {
+      return RenderableCompare.CompareTo(this, other);
+    }
+
+    public int RenderId { get; set; }
+
+    public int RenderDepth { get; private set; }
+    
+    public void Draw(RenderTarget target)
+    {
+      var drawMock = new Mock<Drawable>();
+      target.Draw(drawMock.Object);
+    }
+  }
+
+  internal class RenderComponentStub2
+    : RenderComponentStub
+  {
+    public RenderComponentStub2(Entity parent, bool initializationResult = true) 
+      : base(parent, initializationResult)
+    {
+    }
   }
 }
