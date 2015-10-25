@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Common.Extensions;
 using Game.Core.Events;
-using Game.Core.Events.EntityEvents;
+using Game.Core.Events.Entity;
 using Game.Core.Interfaces;
 using Game.Core.SFML;
 using log4net;

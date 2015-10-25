@@ -1,4 +1,4 @@
-﻿namespace Game.Core.Events.EntityEvents
+﻿namespace Game.Core.Events.Entity
 {
   /// <summary>
   ///   Signals that an entity was added to the entity manager.

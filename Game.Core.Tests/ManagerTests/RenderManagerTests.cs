@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Game.Core.Events;
-using Game.Core.Events.EntityEvents;
+using Game.Core.Events.Entity;
 using Game.Core.Interfaces;
 using Game.Core.Managers;
 using Game.Core.SFML;
