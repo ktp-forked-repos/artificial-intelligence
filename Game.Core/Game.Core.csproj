@@ -71,6 +71,8 @@
     <Compile Include="EntityLifeCycleBase.cs" />
     <Compile Include="Events\Entity\EntityAddedEvent.cs" />
     <Compile Include="Events\EventBase.cs" />
+    <Compile Include="Events\Input\UserMoveEvents.cs" />
+    <Compile Include="Events\Input\WindowResizeEvent.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Interfaces\IEntityManager.cs" />
     <Compile Include="Interfaces\IEventManager.cs" />
@@ -79,6 +81,7 @@
     <Compile Include="Interfaces\IRenderable.cs" />
     <Compile Include="Interfaces\IRenderManager.cs" />
     <Compile Include="Managers\EventManager.cs" />
+    <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Managers\ProcessManager.cs" />
     <Compile Include="Managers\RenderManager.cs" />
     <Compile Include="Processes\ProcessBase.cs" />
@@ -95,9 +98,7 @@
       <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Events\Input\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Baseclass.Contrib.Nuget.Output.2.1.0\build\net40\Baseclass.Contrib.Nuget.Output.targets" Condition="Exists('..\packages\Baseclass.Contrib.Nuget.Output.2.1.0\build\net40\Baseclass.Contrib.Nuget.Output.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
