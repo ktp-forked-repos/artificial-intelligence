@@ -85,7 +85,6 @@ namespace Game.Core.Managers
 
     public bool PostInitialize()
     {
-      m_window.Resized += HandleWindowResized;
       m_window.KeyPressed += HandleKeyPressed;
       m_window.KeyReleased += HandleKeyReleased;
       m_window.MouseButtonPressed += HandleMouseButtonPressed;
@@ -103,7 +102,6 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
-      m_window.Resized -= HandleWindowResized;
       m_window.KeyPressed -= HandleKeyPressed;
       m_window.KeyReleased -= HandleKeyReleased;
       m_window.MouseButtonPressed -= HandleMouseButtonPressed;
@@ -114,13 +112,6 @@ namespace Game.Core.Managers
 
     #endregion
     #region Event Handlers
-
-    private void HandleWindowResized(object sender, SizeEventArgs args)
-    {
-      var size = new Vector2u(args.Width, args.Height);
-      var @event = new WindowResizeEvent {Size = size};
-      m_eventManager.QueueEvent(@event);
-    }
 
     private void HandleKeyPressed(object sender, KeyEventArgs args)
     {
