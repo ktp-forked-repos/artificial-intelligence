@@ -80,11 +80,13 @@
     <Compile Include="Interfaces\IEntityManager.cs" />
     <Compile Include="Interfaces\IEventManager.cs" />
     <Compile Include="Interfaces\IManager.cs" />
+    <Compile Include="Interfaces\IPhysicsManager.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
     <Compile Include="Interfaces\IRenderable.cs" />
     <Compile Include="Interfaces\IRenderManager.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
+    <Compile Include="Managers\PhysicsManager.cs" />
     <Compile Include="Managers\ProcessManager.cs" />
     <Compile Include="Managers\RenderManager.cs" />
     <Compile Include="Processes\ProcessBase.cs" />

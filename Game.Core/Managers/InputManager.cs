@@ -14,6 +14,11 @@ namespace Game.Core.Managers
   /// <summary>
   ///   Handles translation of user inputs to game input events.
   /// </summary>
+  /// <remarks>
+  ///   No unit testing here because of the difficulty of mocking the SFML
+  ///   Window, and this class really just does very simple translation and
+  ///   forwarding of events.
+  /// </remarks>
   public class InputManager
     : IManager
   {
