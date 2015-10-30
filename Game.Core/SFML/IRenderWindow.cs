@@ -1,4 +1,6 @@
-﻿using SFML.Graphics;
+﻿using System;
+using SFML.Graphics;
+using SFML.Window;
 
 namespace Game.Core.SFML
 {
@@ -10,8 +12,13 @@ namespace Game.Core.SFML
     : RenderTarget
   {
     /// <summary>
-    ///   See <see cref="SFML.Graphics.RenderWindow.Display()"/>.
+    ///   See <see cref="RenderWindow.Display()"/>.
     /// </summary>
     void Display();
+
+    /// <summary>
+    ///   See <see cref="Window.Resized"/>
+    /// </summary>
+    event EventHandler<SizeEventArgs> Resized;
   }
 }

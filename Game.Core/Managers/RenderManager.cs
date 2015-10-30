@@ -5,10 +5,13 @@ using System.Reflection;
 using Common.Extensions;
 using Game.Core.Events;
 using Game.Core.Events.Entity;
+using Game.Core.Events.Input;
 using Game.Core.Interfaces;
 using Game.Core.SFML;
 using log4net;
 using SFML.Graphics;
+using SFML.System;
+using SFML.Window;
 
 namespace Game.Core.Managers
 {
@@ -19,12 +22,16 @@ namespace Game.Core.Managers
   public sealed class RenderManager
     : IRenderManager
   {
-    public const int DefaultFrameRate = 60;
-    private const int InitialListSize = 10;
-
     private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+     MethodBase.GetCurrentMethod().DeclaringType);
+
+    public const int DefaultFrameRate = 60;
     public static readonly Color DefaultBackgroundColor = Color.White;
+    public const float InitialViewWidth = 100f;
+    public const float MinViewWidth = 10f;
+    public const float ZoomPercentIncrement = 10f;
+
+    private const int InitialListSize = 10;
 
     // dependencies
     private readonly IEntityManager m_entityManager;
@@ -37,6 +44,7 @@ namespace Game.Core.Managers
     private float m_timeSinceLastRender = 0f;
     private int m_nextRenderId = 1;
     private int m_targetFrameRate;
+    private float m_viewWidth = InitialViewWidth;
 
     // renderables with the default id of 0 get an id from this
     private int NextRenderId
@@ -72,6 +80,11 @@ namespace Game.Core.Managers
       CanPause = true;
       TargetFrameRate = DefaultFrameRate;
       BackgroundColor = DefaultBackgroundColor;
+      View = new View
+      {
+        Center = new Vector2f(0, 0),
+        Viewport = new FloatRect(0, 0, 1, 1)
+      };
     }
 
     #region IManager
@@ -88,9 +101,15 @@ namespace Game.Core.Managers
     public bool PostInitialize()
     {
       m_eventManager.AddListener<EntityAddedEvent>(HandleEntityAdded);
+      m_eventManager.AddListener<ViewDragEvent>(HandleViewDrag);
+      m_eventManager.AddListener<ViewZoomEvent>(HandleViewZoom);
+
+      m_renderWindow.Resized += HandleWindowResized;
+
+      UpdateViewSize();
       return true;
     }
-
+    
     public void Update(float deltaTime, float maxTime)
     {
       if (Paused)
@@ -105,6 +124,7 @@ namespace Game.Core.Managers
       }
 
       m_timeSinceLastRender -= UpdateInterval;
+      m_renderWindow.SetView(View);
       DrawOneFrame(m_renderWindow);
       m_renderWindow.Display();
     }
@@ -112,6 +132,10 @@ namespace Game.Core.Managers
     public void Shutdown()
     {
       m_eventManager.RemoveListener<EntityAddedEvent>(HandleEntityAdded);
+      m_eventManager.RemoveListener<ViewDragEvent>(HandleViewDrag);
+      m_eventManager.RemoveListener<ViewZoomEvent>(HandleViewZoom);
+
+      m_renderWindow.Resized -= HandleWindowResized;
     }
 
     #endregion
@@ -132,6 +156,8 @@ namespace Game.Core.Managers
     public float UpdateInterval { get; private set; }
 
     public Color BackgroundColor { get; set; }
+
+    public View View { get; private set; }
 
     public IReadOnlyCollection<IRenderable> Renderables
     {
@@ -208,6 +234,12 @@ namespace Game.Core.Managers
         "Removed {0} IRenderables from {1}", components.Count, entity.Name);
     }
 
+    private void UpdateViewSize()
+    {
+      var ratio = (float)m_renderWindow.Size.Y / m_renderWindow.Size.X;
+      View.Size = new Vector2f(m_viewWidth, m_viewWidth * ratio);
+    }
+
     #region Event Handlers
 
     private void HandleEntityAdded(EventBase e)
@@ -250,6 +282,27 @@ namespace Game.Core.Managers
       entity.Activated -= HandleEntityActivated;
       entity.DeActivated -= HandleEntityDeActivated;
       entity.Destroyed -= HandleEntityDestroyed;
+    }
+
+    private void HandleViewDrag(EventBase e)
+    {
+      var evt = (ViewDragEvent) e;
+      var delta = evt.Delta;
+      var size = View.Size;
+      View.Center += new Vector2f(delta.X * size.X, delta.Y * size.Y);
+    }
+
+    private void HandleViewZoom(EventBase e)
+    {
+      var evt = (ViewZoomEvent) e;
+      m_viewWidth += -evt.Delta * (m_viewWidth / ZoomPercentIncrement);
+      m_viewWidth = Math.Max(m_viewWidth, MinViewWidth);
+      UpdateViewSize();
+    }
+
+    private void HandleWindowResized(object sender, SizeEventArgs e)
+    {
+      UpdateViewSize();
     }
 
     #endregion

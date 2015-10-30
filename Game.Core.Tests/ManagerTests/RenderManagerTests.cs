@@ -2,13 +2,17 @@
 using System.Diagnostics;
 using Game.Core.Events;
 using Game.Core.Events.Entity;
+using Game.Core.Events.Input;
 using Game.Core.Interfaces;
 using Game.Core.Managers;
 using Game.Core.SFML;
 using Game.Core.Tests.Stubs;
+using Microsoft.Xna.Framework;
 using Moq;
 using NUnit.Framework;
 using SFML.Graphics;
+using SFML.System;
+using SFML.Window;
 
 namespace Game.Core.Tests.ManagerTests
 {
@@ -285,7 +289,7 @@ namespace Game.Core.Tests.ManagerTests
     [Test]
     public void EntityListener_HandlesEntityDoesNotExist()
     {
-      Action<EventBase> listener = null;
+      Action<EventBase> listener = a => { };
       eventManMock.Setup(m =>
         m.AddListener<EntityAddedEvent>(It.IsNotNull<Action<EventBase>>()))
         .Callback<Action<EventBase>>(action => listener = action);
@@ -296,7 +300,6 @@ namespace Game.Core.Tests.ManagerTests
       renderManager.PostInitialize();
       var @event = new EntityAddedEvent { EntityId = 1 };
 
-      Debug.Assert(listener != null);
       listener(@event);
 
       Assert.IsEmpty(renderManager.Renderables);
@@ -307,7 +310,7 @@ namespace Game.Core.Tests.ManagerTests
     [Test]
     public void EntityListener_DoesNotAddFromDeactivatedEntity()
     {
-      Action<EventBase> listener = null;
+      Action<EventBase> listener = a => { };
       eventManMock.Setup(m =>
         m.AddListener<EntityAddedEvent>(It.IsNotNull<Action<EventBase>>()))
         .Callback<Action<EventBase>>(action => listener = action);
@@ -318,7 +321,6 @@ namespace Game.Core.Tests.ManagerTests
       renderManager.PostInitialize();
       var @event = new EntityAddedEvent { EntityId = entity.Id };
 
-      Debug.Assert(listener != null);
       listener(@event);
 
       Assert.IsEmpty(renderManager.Renderables);
@@ -329,7 +331,7 @@ namespace Game.Core.Tests.ManagerTests
     [Test]
     public void EntityListener_AddsRenderablesFromActiveEntity()
     {
-      Action<EventBase> listener = null;
+      Action<EventBase> listener = a => { };
       eventManMock.Setup(m => 
         m.AddListener<EntityAddedEvent>(It.IsNotNull<Action<EventBase>>()))
         .Callback<Action<EventBase>>(action => listener = action);
@@ -341,7 +343,6 @@ namespace Game.Core.Tests.ManagerTests
       renderManager.PostInitialize();
       var @event = new EntityAddedEvent {EntityId = entity.Id};
 
-      Debug.Assert(listener != null);
       listener(@event);
 
       Assert.AreEqual(2, renderManager.Renderables.Count);
@@ -352,7 +353,7 @@ namespace Game.Core.Tests.ManagerTests
     [Test]
     public void EntityListener_AddsRenderablesWhenEntityActivated()
     {
-      Action<EventBase> listener = null;
+      Action<EventBase> listener = a => { };
       eventManMock.Setup(m => 
         m.AddListener<EntityAddedEvent>(It.IsNotNull<Action<EventBase>>()))
         .Callback<Action<EventBase>>(action => listener = action);
@@ -363,7 +364,6 @@ namespace Game.Core.Tests.ManagerTests
       renderManager.PostInitialize();
       var @event = new EntityAddedEvent { EntityId = entity.Id };
 
-      Debug.Assert(listener != null);
       listener(@event);
       entity.Activate();
 
@@ -375,7 +375,7 @@ namespace Game.Core.Tests.ManagerTests
     [Test]
     public void EntityListener_RemovesRenderablesWhenEntityDeactivated()
     {
-      Action<EventBase> listener = null;
+      Action<EventBase> listener = a => { };
       eventManMock.Setup(m =>
         m.AddListener<EntityAddedEvent>(It.IsNotNull<Action<EventBase>>()))
         .Callback<Action<EventBase>>(action => listener = action);
@@ -387,7 +387,6 @@ namespace Game.Core.Tests.ManagerTests
       renderManager.PostInitialize();
       var @event = new EntityAddedEvent { EntityId = entity.Id };
 
-      Debug.Assert(listener != null);
       listener(@event);
       entity.Deactivate();
 
@@ -399,7 +398,7 @@ namespace Game.Core.Tests.ManagerTests
     [Test]
     public void EntityListener_RemovesRenderablesWhenEntityDestroyed()
     {
-      Action<EventBase> listener = null;
+      Action<EventBase> listener = a => { };
       eventManMock.Setup(m =>
         m.AddListener<EntityAddedEvent>(It.IsNotNull<Action<EventBase>>()))
         .Callback<Action<EventBase>>(action => listener = action);
@@ -411,13 +410,93 @@ namespace Game.Core.Tests.ManagerTests
       renderManager.PostInitialize();
       var @event = new EntityAddedEvent { EntityId = entity.Id };
 
-      Debug.Assert(listener != null);
       listener(@event);
       entity.Destroy();
 
       Assert.IsEmpty(renderManager.Renderables);
       eventManMock.VerifyAll();
       entityManMock.VerifyAll();
+    }
+
+    [Test]
+    public void ViewDragListener_MovesView()
+    {
+      Action<EventBase> listener = a => {};
+      eventManMock.Setup(m =>
+        m.AddListener<ViewDragEvent>(It.IsNotNull<Action<EventBase>>()))
+        .Callback<Action<EventBase>>(a => listener = a);
+      windowMock.SetupGet(m => m.Size).Returns(new Vector2u(1, 1));
+      renderManager.Initialize();
+      renderManager.PostInitialize();
+      var @event = new ViewDragEvent {Delta = new Vector2(.5f, .5f)};
+      var expected = renderManager.View.Size * .5f; // expect view to move by 50% of size
+
+      listener(@event);
+
+      Assert.AreEqual(expected, renderManager.View.Center);
+      eventManMock.VerifyAll();
+      windowMock.VerifyAll();
+    }
+
+    [Test]
+    public void ViewZoomListener_ZoomsViewIn()
+    {
+      Action<EventBase> listener = a => { };
+      eventManMock.Setup(m =>
+        m.AddListener<ViewZoomEvent>(It.IsNotNull<Action<EventBase>>()))
+        .Callback<Action<EventBase>>(a => listener = a);
+      windowMock.SetupGet(m => m.Size).Returns(new Vector2u(1, 1));
+      renderManager.Initialize();
+      renderManager.PostInitialize();
+      var @event = new ViewZoomEvent {Delta = 1};
+      var originalSize = renderManager.View.Size;
+
+      listener(@event);
+
+      // view should be smaller, not going to quibble about amounts
+      Assert.Less(renderManager.View.Size.X, originalSize.X);
+      Assert.Less(renderManager.View.Size.Y, originalSize.Y);
+      eventManMock.VerifyAll();
+      windowMock.VerifyAll();
+    }
+
+    [Test]
+    public void ViewZoomListener_ZoomsViewOut()
+    {
+      Action<EventBase> listener = a => { };
+      eventManMock.Setup(m =>
+        m.AddListener<ViewZoomEvent>(It.IsNotNull<Action<EventBase>>()))
+        .Callback<Action<EventBase>>(a => listener = a);
+      windowMock.SetupGet(m => m.Size).Returns(new Vector2u(1, 1));
+      renderManager.Initialize();
+      renderManager.PostInitialize();
+      var @event = new ViewZoomEvent { Delta = -1 };
+      var originalSize = renderManager.View.Size;
+
+      listener(@event);
+
+      // view should be larger, not going to quibble about amounts
+      Assert.Greater(renderManager.View.Size.X, originalSize.X);
+      Assert.Greater(renderManager.View.Size.Y, originalSize.Y);
+      eventManMock.VerifyAll();
+      windowMock.VerifyAll();
+    }
+
+    [Test]
+    public void WindowSizeListener_UpdatesSize()
+    {
+      windowMock.SetupGet(m => m.Size).Returns(new Vector2u(1, 1));
+      renderManager.Initialize();
+      renderManager.PostInitialize();
+      windowMock.SetupGet(m => m.Size).Returns(new Vector2u(1, 2));
+      var @event = new SizeEventArgs(new SizeEvent {Height = 1, Width = 2});
+      var originalSize = renderManager.View.Size;
+
+      windowMock.Raise(m => m.Resized += null, @event);
+
+      Assert.AreEqual(originalSize.X, renderManager.View.Size.X);
+      Assert.Greater(renderManager.View.Size.Y, originalSize.Y);
+      windowMock.VerifyAll();
     }
   }
 }

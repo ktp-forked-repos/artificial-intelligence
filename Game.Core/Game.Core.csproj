@@ -71,7 +71,11 @@
     <Compile Include="EntityLifeCycleBase.cs" />
     <Compile Include="Events\Entity\EntityAddedEvent.cs" />
     <Compile Include="Events\EventBase.cs" />
-    <Compile Include="Events\Input\UserMoveEvents.cs" />
+    <Compile Include="Events\Input\GamePausedEvent.cs" />
+    <Compile Include="Events\Input\SelectEvent.cs" />
+    <Compile Include="Events\Input\ViewDragEvent.cs" />
+    <Compile Include="Events\Input\MoveEvent.cs" />
+    <Compile Include="Events\Input\ViewZoomEvent.cs" />
     <Compile Include="Events\Input\WindowResizeEvent.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Interfaces\IEntityManager.cs" />

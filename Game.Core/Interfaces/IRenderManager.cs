@@ -30,6 +30,11 @@ namespace Game.Core.Interfaces
     Color BackgroundColor { get; set; }
 
     /// <summary>
+    ///   The current view rendered by the manager.
+    /// </summary>
+    View View { get; }
+
+    /// <summary>
     ///   Current renderable objects in the manager.
     /// </summary>
     IReadOnlyCollection<IRenderable> Renderables { get; }
