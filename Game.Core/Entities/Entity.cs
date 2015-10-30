@@ -5,11 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Common.Extensions;
-using Game.Core.Components;
+using Game.Core.Entities.Components;
 using Game.Core.Interfaces;
 using log4net;
 
-namespace Game.Core
+namespace Game.Core.Entities
 {
   /// <summary>
   ///   An entity is a container for one or more components.  The entity 

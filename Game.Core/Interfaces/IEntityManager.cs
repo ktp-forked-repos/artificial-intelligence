@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Core.Entities;
 
 namespace Game.Core.Interfaces
 {

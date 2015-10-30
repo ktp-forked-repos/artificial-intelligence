@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Game.Core
+namespace Game.Core.Entities
 {
   /// <summary>
   ///   The current state of the entity object in its lifetime.

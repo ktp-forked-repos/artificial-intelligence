@@ -65,10 +65,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\ComponentBase.cs" />
-    <Compile Include="Components\TransformComponentBase.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="EntityLifeCycleBase.cs" />
+    <Compile Include="Entities\Components\ComponentBase.cs" />
+    <Compile Include="Entities\Components\TransformComponentBase.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\EntityLifeCycleBase.cs" />
     <Compile Include="Events\Entity\EntityAddedEvent.cs" />
     <Compile Include="Events\EventBase.cs" />
     <Compile Include="Events\Input\GamePausedEvent.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Game.Core.Components;
+using Game.Core.Entities;
+using Game.Core.Entities.Components;
 using Game.Core.Tests.Stubs;
 using NUnit.Framework;
 

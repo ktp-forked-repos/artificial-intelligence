@@ -1,4 +1,5 @@
-﻿using Game.Core.Components;
+﻿using Game.Core.Entities;
+using Game.Core.Entities.Components;
 using Game.Core.Interfaces;
 using Microsoft.Xna.Framework;
 using Moq;

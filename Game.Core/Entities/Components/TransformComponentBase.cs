@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using SFML.Graphics;
 
-namespace Game.Core.Components
+namespace Game.Core.Entities.Components
 {
   /// <summary>
   ///   The base class for all types that supply an object transform.

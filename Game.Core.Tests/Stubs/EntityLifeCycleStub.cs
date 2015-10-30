@@ -1,4 +1,6 @@
-﻿namespace Game.Core.Tests.Stubs
+﻿using Game.Core.Entities;
+
+namespace Game.Core.Tests.Stubs
 {
   internal class EntityLifeCycleStub
     : EntityLifeCycleBase

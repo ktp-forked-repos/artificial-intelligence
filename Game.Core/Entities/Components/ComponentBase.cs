@@ -3,7 +3,7 @@ using System.Reflection;
 using Common.Extensions;
 using log4net;
 
-namespace Game.Core.Components
+namespace Game.Core.Entities.Components
 {
   /// <summary>
   ///   The base for all components that give functionality to an entity.

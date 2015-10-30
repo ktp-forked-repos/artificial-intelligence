@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Game.Core.Entities;
 using Game.Core.Events;
 using Game.Core.Events.Entity;
 using Game.Core.Events.Input;
