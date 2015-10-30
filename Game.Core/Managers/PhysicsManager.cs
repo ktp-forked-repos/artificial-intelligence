@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Common.Extensions;
 using FarseerPhysics;
@@ -16,6 +17,7 @@ namespace Game.Core.Managers
   ///   No unit testing here because of the difficulty of mocking the Farseer
   ///   World.
   /// </remarks>
+  [ExcludeFromCodeCoverage]
   public class PhysicsManager
     : IPhysicsManager
   {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using SFML.Window;
 
 namespace Game.Core.SFML
@@ -8,6 +9,7 @@ namespace Game.Core.SFML
   ///   All constructors are direct implementations of RenderWindow 
   ///   constructors.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   public class RenderWindow
     : global::SFML.Graphics.RenderWindow, IRenderWindow
   {

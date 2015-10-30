@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Common.Extensions;
@@ -20,6 +21,7 @@ namespace Game.Core.Managers
   ///   Window, and this class really just does very simple translation and
   ///   forwarding of events.
   /// </remarks>
+  [ExcludeFromCodeCoverage]
   public class InputManager
     : IManager
   {
