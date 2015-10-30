@@ -185,6 +185,9 @@ namespace Game.Core
 
     /// <summary>
     ///   Get the game render manager.
+    /// 
+    ///   Note: RenderManager will always be null when the engine is in 
+    ///   headless mode.
     /// </summary>
     public IRenderManager RenderManager { get; private set; }
     
