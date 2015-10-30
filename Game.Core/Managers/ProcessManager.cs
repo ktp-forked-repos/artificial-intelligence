@@ -37,11 +37,15 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
+      Log.Verbose("ProcessManager Initializing");
+
       return true;
     }
 
     public bool PostInitialize()
     {
+      Log.Verbose("ProcessManager Post-Initializing");
+
       return true;
     }
 
@@ -71,13 +75,14 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
+      Log.Verbose("ProcessManager Shutting Down");
+
+      Log.DebugFmt("Aborting {0} process chains", m_processes.Count);
       foreach (var process in m_processes)
       {
         process.AbortAll();
       }
-
-      Log.DebugFmt("Aborted {0} process chains during shutdown", 
-        m_processes.Count);
+      
       m_processes.Clear();
     }
 

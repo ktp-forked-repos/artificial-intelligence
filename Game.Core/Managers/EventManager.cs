@@ -54,11 +54,15 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
+      Log.Verbose("EventManager Initializing");
+
       return true;
     }
 
     public bool PostInitialize()
     {
+      Log.Verbose("EventManager Post-Initializing");
+
       return true;
     }
 
@@ -100,6 +104,8 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
+      Log.Verbose("EventManager Shutting Down");
+
       m_listeners.Clear();
       ReadQueue.Clear();
       WriteQueue.Clear();

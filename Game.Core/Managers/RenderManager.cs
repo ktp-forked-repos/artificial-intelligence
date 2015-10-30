@@ -95,11 +95,15 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
+      Log.Verbose("RenderManager Initializing");
+
       return true;
     }
 
     public bool PostInitialize()
     {
+      Log.Verbose("RenderManager Post-Initializing");
+
       m_eventManager.AddListener<EntityAddedEvent>(HandleEntityAdded);
       m_eventManager.AddListener<ViewDragEvent>(HandleViewDrag);
       m_eventManager.AddListener<ViewZoomEvent>(HandleViewZoom);
@@ -131,6 +135,8 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
+      Log.Verbose("RenderManager Shutting Down");
+
       m_eventManager.RemoveListener<EntityAddedEvent>(HandleEntityAdded);
       m_eventManager.RemoveListener<ViewDragEvent>(HandleViewDrag);
       m_eventManager.RemoveListener<ViewZoomEvent>(HandleViewZoom);

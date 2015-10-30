@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Common.Extensions;
 using Game.Core.Events.Input;
 using Game.Core.Interfaces;
 using log4net;
@@ -71,6 +72,8 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
+      Log.Verbose("InputManager Initializing");
+
       var keys = Enum.GetValues(typeof (Keyboard.Key))
         .Cast<Keyboard.Key>();
       foreach (var key in keys)
@@ -90,6 +93,8 @@ namespace Game.Core.Managers
 
     public bool PostInitialize()
     {
+      Log.Verbose("InputManager Post-Initializing");
+
       m_window.KeyPressed += HandleKeyPressed;
       m_window.KeyReleased += HandleKeyReleased;
       m_window.MouseButtonPressed += HandleMouseButtonPressed;
@@ -107,6 +112,8 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
+      Log.Verbose("InputManager Shutting Down");
+
       m_window.KeyPressed -= HandleKeyPressed;
       m_window.KeyReleased -= HandleKeyReleased;
       m_window.MouseButtonPressed -= HandleMouseButtonPressed;

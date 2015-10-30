@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Common.Extensions;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using Game.Core.Interfaces;
@@ -39,7 +40,7 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
-      Log.Debug("PhysicsManager Initializing");
+      Log.Verbose("PhysicsManager Initializing");
 
       // Farseer configuration
       Settings.AllowSleep = true;
@@ -47,13 +48,15 @@ namespace Game.Core.Managers
       Settings.VelocityIterations = 10;
       Settings.PositionIterations = 8;
 
+      Log.DebugFmt("UpdateInterval: {0:F4} ({1:F2} fps)", 
+        UpdateInterval, 1 / UpdateInterval);
       World = new World(Vector2.Zero);
       return true;
     }
 
     public bool PostInitialize()
     {
-      Log.Debug("PhysicsManager Post-Initializing");
+      Log.Verbose("PhysicsManager Post-Initializing");
 
       return true;
     }
@@ -78,7 +81,7 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
-      Log.Debug("PhysicsManager Shutting Down");
+      Log.Verbose("PhysicsManager Shutting Down");
 
       PreStep = null;
       PostStep = null;
