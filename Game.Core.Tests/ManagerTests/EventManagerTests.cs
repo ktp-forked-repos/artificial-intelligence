@@ -90,23 +90,6 @@ namespace Game.Core.Tests.ManagerTests
     }
 
     [Test]
-    public void Update_DefersEventsWhenTimeExpires()
-    {
-      var em = new EventManager();
-      em.Initialize();
-      em.PostInitialize();
-      var listenerCalled = false;
-      Action<EventBase> listener = e => listenerCalled = true;
-      em.QueueEvent(new EventStub());
-      em.AddListener<EventStub>(listener);
-
-      em.Update(1f);
-
-      Assert.IsFalse(listenerCalled);
-      Assert.AreEqual(1, em.PendingEvents.Count);
-    }
-
-    [Test]
     public void Update_MaintainsOrderOfDeferredEvents()
     {
       var em = new EventManager();
