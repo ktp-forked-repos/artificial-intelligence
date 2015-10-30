@@ -114,7 +114,7 @@ namespace Game.Core.Tests.ManagerTests
       renderableMock.Verify(m => m.Draw(It.IsAny<RenderTarget>()), Times.Never);
       renderManager.AddRenderable(renderableMock.Object);
 
-      renderManager.Update(0f, 0f);
+      renderManager.Update(0f);
 
       windowMock.VerifyAll();
       renderableMock.VerifyAll();
@@ -131,7 +131,7 @@ namespace Game.Core.Tests.ManagerTests
       renderableMock.Verify(m => m.Draw(It.IsAny<RenderTarget>()), Times.Never);
       renderManager.AddRenderable(renderableMock.Object);
 
-      renderManager.Update(1f, 1f);
+      renderManager.Update(1f);
 
       windowMock.VerifyAll();
       renderableMock.VerifyAll();
@@ -147,7 +147,7 @@ namespace Game.Core.Tests.ManagerTests
       renderableMock.Setup(m => m.Draw(It.IsNotNull<RenderTarget>()));
       renderManager.AddRenderable(renderableMock.Object);
       
-      renderManager.Update(1f, 1f);
+      renderManager.Update(1f);
 
       windowMock.VerifyAll();
       renderableMock.VerifyAll();

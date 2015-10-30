@@ -41,10 +41,7 @@
     /// <param name="deltaTime">
     ///   Elapsed game time, in seconds.
     /// </param>
-    /// <param name="maxTime">
-    ///   The max time the manager can spend on its update, in seconds.
-    /// </param>
-    void Update(float deltaTime, float maxTime);
+    void Update(float deltaTime);
 
     /// <summary>
     ///   Shuts down the manager without releasing resources.

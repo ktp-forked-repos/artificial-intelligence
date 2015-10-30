@@ -66,7 +66,7 @@ namespace Game.Core.Managers
       return true;
     }
 
-    public void Update(float deltaTime, float maxTime)
+    public void Update(float deltaTime)
     {
       // queues are swapped so that any new events added in response to an 
       // event firing are processed in the next frame
@@ -82,16 +82,6 @@ namespace Game.Core.Managers
       m_eventDispatchTimer.Restart();
       while (ReadQueue.Count > 0)
       {
-        if (m_eventDispatchTimer.Elapsed.TotalSeconds >= maxTime)
-        {
-          Log.WarnFmt("Processing aborted with {0} events in the queue",
-            ReadQueue.Count);
-
-          WriteQueue.InsertRange(0, ReadQueue);
-          ReadQueue.Clear();
-          break;
-        }
-
         var evt = ReadQueue.First();
         ReadQueue.RemoveAt(0);
         TriggerEvent(evt);

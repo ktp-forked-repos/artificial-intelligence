@@ -77,6 +77,8 @@
     <Compile Include="Events\Input\MoveEvent.cs" />
     <Compile Include="Events\Input\ViewZoomEvent.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="GameEngine.cs" />
+    <Compile Include="Interfaces\IDrawingWindow.cs" />
     <Compile Include="Interfaces\IEntityManager.cs" />
     <Compile Include="Interfaces\IEventManager.cs" />
     <Compile Include="Interfaces\IManager.cs" />

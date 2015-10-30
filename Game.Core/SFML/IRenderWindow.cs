@@ -12,13 +12,13 @@ namespace Game.Core.SFML
     : RenderTarget
   {
     /// <summary>
-    ///   See <see cref="RenderWindow.Display()"/>.
-    /// </summary>
-    void Display();
-
-    /// <summary>
     ///   See <see cref="Window.Resized"/>
     /// </summary>
     event EventHandler<SizeEventArgs> Resized;
+
+    /// <summary>
+    ///   See <see cref="RenderWindow.Display()"/>.
+    /// </summary>
+    void Display();
   }
 }

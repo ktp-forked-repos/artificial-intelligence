@@ -53,7 +53,7 @@ namespace Game.Core.Tests.ManagerTests
       em.AddListener<EventStub>(listener);
       em.AddListener<EventStub2>(listener);
 
-      em.Update(1f, 1f);
+      em.Update(1f);
 
       Assert.IsFalse(listenerFired);
     }
@@ -67,7 +67,7 @@ namespace Game.Core.Tests.ManagerTests
       em.QueueEvent(new EventStub());
       em.QueueEvent(new EventStub2());
 
-      em.Update(1f, 1f);
+      em.Update(1f);
 
       Assert.IsEmpty(em.PendingEvents);
     }
@@ -83,7 +83,7 @@ namespace Game.Core.Tests.ManagerTests
       em.QueueEvent(new EventStub());
       em.AddListener<EventStub>(listener);
 
-      em.Update(1f, 1f);
+      em.Update(1f);
 
       Assert.IsTrue(listenerCalled);
       Assert.IsEmpty(em.PendingEvents);
@@ -100,7 +100,7 @@ namespace Game.Core.Tests.ManagerTests
       em.QueueEvent(new EventStub());
       em.AddListener<EventStub>(listener);
 
-      em.Update(1f, -1f);
+      em.Update(1f);
 
       Assert.IsFalse(listenerCalled);
       Assert.AreEqual(1, em.PendingEvents.Count);
@@ -125,8 +125,8 @@ namespace Game.Core.Tests.ManagerTests
       em.AddListener<EventStub>(listener1);
       em.AddListener<EventStub2>(listener2);
 
-      em.Update(1f, -1f); // defer
-      em.Update(1f, 1f); // fire
+      em.Update(1f); // defer
+      em.Update(1f); // fire
 
       Assert.IsEmpty(em.PendingEvents);
       Assert.IsNotNull(listener1Time);

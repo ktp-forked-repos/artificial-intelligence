@@ -52,7 +52,7 @@ namespace Game.Core.Tests.ManagerTests
       pm.Paused = true;
       const float time = 1.0f;
 
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.AreEqual(0, process.DoUpdateCallCount);
     }
@@ -68,7 +68,7 @@ namespace Game.Core.Tests.ManagerTests
       pm.AddProcess(process);
       const float time = 1.0f;
 
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.AreEqual(0, process.DoUpdateCallCount);
     }
@@ -85,7 +85,7 @@ namespace Game.Core.Tests.ManagerTests
       process.Resume();
       const float time = 1.0f;
 
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.AreEqual(1, process.DoUpdateCallCount);
       Assert.AreEqual(time, process.LastUpdateDeltaTime);
@@ -103,7 +103,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process.Succeed();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.IsEmpty(pm.Processes);
     }
@@ -120,7 +120,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process.Fail();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.IsEmpty(pm.Processes);
     }
@@ -137,7 +137,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process.Abort();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.IsEmpty(pm.Processes);
     }
@@ -156,7 +156,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process1.Fail();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.IsEmpty(pm.Processes);
       Assert.IsTrue(process2.WasAborted);
@@ -176,7 +176,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process1.Abort();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.IsEmpty(pm.Processes);
       Assert.IsTrue(process2.WasAborted);
@@ -196,7 +196,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process1.Succeed();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.AreEqual(1, pm.Processes.Count);
       Assert.IsNotNull(pm.Processes.Single(p => ReferenceEquals(p, process2)));
@@ -218,7 +218,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process1.Fail();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.AreEqual(1, pm.Processes.Count);
       Assert.IsNotNull(pm.Processes.Single(p => ReferenceEquals(p, process2)));
@@ -240,7 +240,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process1.Abort();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.AreEqual(1, pm.Processes.Count);
       Assert.IsNotNull(pm.Processes.Single(p => ReferenceEquals(p, process2)));
@@ -261,7 +261,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process1.Succeed();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.IsEmpty(pm.Processes);
       Assert.IsTrue(process2.WasAborted);
@@ -281,7 +281,7 @@ namespace Game.Core.Tests.ManagerTests
       const float time = 1.0f;
 
       process1.Succeed();
-      pm.Update(time, time);
+      pm.Update(time);
 
       Assert.AreEqual(1, pm.Processes.Count);
       Assert.IsNotNull(pm.Processes.Single(p => ReferenceEquals(p, process2)));

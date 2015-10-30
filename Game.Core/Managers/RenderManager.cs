@@ -115,7 +115,7 @@ namespace Game.Core.Managers
       return true;
     }
     
-    public void Update(float deltaTime, float maxTime)
+    public void Update(float deltaTime)
     {
       if (Paused)
       {
