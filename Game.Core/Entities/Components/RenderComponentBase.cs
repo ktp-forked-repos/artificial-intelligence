@@ -23,7 +23,7 @@ namespace Game.Core.Entities.Components
     /// <summary>
     ///   Render states to be used when drawing.
     /// </summary>
-    protected RenderStates RenderStates { get; set; }
+    protected RenderStates RenderStates;
 
     /// <summary>
     ///   Create the component.
@@ -48,7 +48,7 @@ namespace Game.Core.Entities.Components
 
     public int RenderId { get; set; }
     
-    public int RenderDepth { get; protected set; }
+    public int RenderDepth { get; set; }
 
     public abstract void Draw(RenderTarget target);
 
