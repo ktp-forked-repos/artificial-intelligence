@@ -87,6 +87,7 @@
     <Compile Include="ManagerTests\ProcessManagerTests.cs" />
     <Compile Include="ManagerTests\RenderManagerTests.cs" />
     <Compile Include="MiscTests\RenderCompareTests.cs" />
+    <Compile Include="MiscTests\VectorExtensionsTests.cs" />
     <Compile Include="ProcessTests\ProcessBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\ComponentStub.cs" />
