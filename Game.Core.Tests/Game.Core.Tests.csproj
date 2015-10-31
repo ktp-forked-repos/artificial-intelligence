@@ -80,6 +80,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="EntityTests\ComponentTests\ComponentBaseTests.cs" />
     <Compile Include="EntityTests\EntityLifeCycleBaseTests.cs" />
     <Compile Include="EntityTests\EntityTests.cs" />
     <Compile Include="GlobalSetup.cs" />

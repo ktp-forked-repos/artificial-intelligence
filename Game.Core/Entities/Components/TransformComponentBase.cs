@@ -1,4 +1,5 @@
-﻿using Game.Core.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Game.Core.Extensions;
 using Microsoft.Xna.Framework;
 using SFML.Graphics;
 
@@ -7,6 +8,10 @@ namespace Game.Core.Entities.Components
   /// <summary>
   ///   The base class for all types that supply an object transform.
   /// </summary>
+  /// <remarks>
+  ///   No tests because everything here is really just basic math operations.
+  /// </remarks>
+  [ExcludeFromCodeCoverage]
   public abstract class TransformComponentBase
     : ComponentBase
   {

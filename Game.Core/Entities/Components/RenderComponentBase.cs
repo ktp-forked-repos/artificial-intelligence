@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Common.Extensions;
 using Game.Core.Interfaces;
 using log4net;
@@ -14,6 +15,11 @@ namespace Game.Core.Entities.Components
   ///   Note: This class requires the entity to have a transform component, or
   ///   it will fail initialization.
   /// </summary>
+  /// <remarks>
+  ///   No testing because there's so little logic in the class it isn't worth
+  ///   the trouble.
+  /// </remarks>
+  [ExcludeFromCodeCoverage]
   public abstract class RenderComponentBase
     : ComponentBase, IRenderable
   {
@@ -32,12 +38,21 @@ namespace Game.Core.Entities.Components
     protected RenderComponentBase(Entity parent) 
       : base(parent)
     {
+      DrawingEnabled = true;
       RenderStates = new RenderStates
       {
         BlendMode = BlendMode.Alpha,
         Transform = Transform.Identity
       };
     }
+
+    /// <summary>
+    ///   If false, this shape is not drawn.
+    /// </summary>
+    /// <remarks>
+    ///   Default: true
+    /// </remarks>
+    public bool DrawingEnabled { get; set; }
     
     #region IRenderable
 
@@ -50,7 +65,15 @@ namespace Game.Core.Entities.Components
     
     public int RenderDepth { get; set; }
 
-    public abstract void Draw(RenderTarget target);
+    public void Draw(RenderTarget target)
+    {
+      if (!DrawingEnabled)
+      {
+        return;
+      }
+
+      DoDraw(target);
+    }
 
     #endregion
     #region ComponentBase
@@ -73,5 +96,11 @@ namespace Game.Core.Entities.Components
     }
 
     #endregion
+
+    /// <summary>
+    ///   Does the actual drawing action.
+    /// </summary>
+    /// <param name="target"></param>
+    protected abstract void DoDraw(RenderTarget target);
   }
 }

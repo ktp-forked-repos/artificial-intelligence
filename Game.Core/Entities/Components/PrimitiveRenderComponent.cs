@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Common.Extensions;
 using log4net;
@@ -10,6 +11,11 @@ namespace Game.Core.Entities.Components
   ///   Renders a basic primitive shape.  The shape may be supplied at 
   ///   initialization or created later via a function. 
   /// </summary>
+  /// <remarks>
+  ///   No unit testing because it's a pain to cover all the possibilities with
+  ///   mocking render target and shape.
+  /// </remarks>
+  [ExcludeFromCodeCoverage]
   public sealed class PrimitiveRenderComponent
     : RenderComponentBase
   {
@@ -28,7 +34,6 @@ namespace Game.Core.Entities.Components
       : base(parent)
     {
       NeedsUpdate = false;
-      DrawingEnabled = true;
     }
 
     /// <summary>
@@ -63,14 +68,6 @@ namespace Game.Core.Entities.Components
 
       m_creator = creator;
     }
-
-    /// <summary>
-    ///   If false, this shape is not drawn.
-    /// </summary>
-    /// <remarks>
-    ///   Default: true
-    /// </remarks>
-    public bool DrawingEnabled { get; set; }
 
     /// <summary>
     ///   Get or set the fill color of the shape.  May be set at any time.
@@ -112,15 +109,14 @@ namespace Game.Core.Entities.Components
       }
     }
 
-    #region IRenderable
-
-    public override void Draw(RenderTarget target)
+    #region RenderComponentBase
+    
+    public override void Update(float deltaTime)
     {
-      if (!DrawingEnabled)
-      {
-        return;
-      }
+    }
 
+    protected override void DoDraw(RenderTarget target)
+    {
       if (m_updateShapeProperties)
       {
         m_shape.FillColor = FillColor;
@@ -131,13 +127,6 @@ namespace Game.Core.Entities.Components
 
       RenderStates.Transform = Parent.TransformComponent.GraphicsTransform;
       target.Draw(m_shape, RenderStates);
-    }
-
-    #endregion
-    #region ComponentBase
-
-    public override void Update(float deltaTime)
-    {
     }
 
     protected override bool DoInitialize()

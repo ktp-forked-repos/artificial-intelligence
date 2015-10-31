@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Game.Core.Extensions;
+﻿using Game.Core.Extensions;
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
-using SFML.Graphics;
 using SFML.System;
 
 namespace Game.Core.Tests.MiscTests
