@@ -54,18 +54,36 @@ namespace Game.Core.Interfaces
   /// </summary>
   public static class RenderableCompare
   {
+    /// <summary>
+    ///   Compare two renderables to determine their rendering order.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns>
+    ///   1: a comes before b in the render order
+    ///   0: a and b render at the same depth
+    ///   -1: b comes before a in the render order
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///   a is null
+    ///   -or-
+    ///   b is null
+    /// </exception>
     public static int CompareTo(IRenderable a, IRenderable b)
     {
-      if (a.RenderDepth > b.RenderDepth)
-      {
-        return -1;
-      }
+      if (a == null) throw new ArgumentNullException("a");
+      if (b == null) throw new ArgumentNullException("b");
+
       if (a.RenderDepth < b.RenderDepth)
       {
         return 1;
       }
+      if (a.RenderDepth == b.RenderDepth)
+      {
+        return 0;
+      }
 
-      return 0;
+      return 1;
     }
   }
 }
