@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Components\ComponentBase.cs" />
+    <Compile Include="Entities\Components\RenderComponentBase.cs" />
     <Compile Include="Entities\Components\TransformComponentBase.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityLifeCycleBase.cs" />
