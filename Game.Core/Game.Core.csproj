@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Components\ComponentBase.cs" />
+    <Compile Include="Entities\Components\PhysicsTransformComponentBase.cs" />
     <Compile Include="Entities\Components\PrimitiveRenderComponent.cs" />
     <Compile Include="Entities\Components\RenderComponentBase.cs" />
     <Compile Include="Entities\Components\TransformComponentBase.cs" />
@@ -81,16 +82,17 @@
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="Interfaces\IDrawingWindow.cs" />
-    <Compile Include="Interfaces\IEntityManager.cs" />
-    <Compile Include="Interfaces\IEventManager.cs" />
-    <Compile Include="Interfaces\IManager.cs" />
-    <Compile Include="Interfaces\IPhysicsManager.cs" />
-    <Compile Include="Interfaces\IProcessManager.cs" />
+    <Compile Include="Interfaces\IPhysicsObject.cs" />
     <Compile Include="Interfaces\IRenderable.cs" />
-    <Compile Include="Interfaces\IRenderManager.cs" />
     <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
+    <Compile Include="Managers\Interfaces\IEntityManager.cs" />
+    <Compile Include="Managers\Interfaces\IEventManager.cs" />
+    <Compile Include="Managers\Interfaces\IManager.cs" />
+    <Compile Include="Managers\Interfaces\IPhysicsManager.cs" />
+    <Compile Include="Managers\Interfaces\IProcessManager.cs" />
+    <Compile Include="Managers\Interfaces\IRenderManager.cs" />
     <Compile Include="Managers\PhysicsManager.cs" />
     <Compile Include="Managers\ProcessManager.cs" />
     <Compile Include="Managers\RenderManager.cs" />

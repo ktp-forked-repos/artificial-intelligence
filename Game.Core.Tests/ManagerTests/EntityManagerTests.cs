@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Game.Core.Entities;
 using Game.Core.Interfaces;
 using Game.Core.Managers;
+using Game.Core.Managers.Interfaces;
 using Game.Core.Tests.Stubs;
 using Moq;
 using NUnit.Framework;

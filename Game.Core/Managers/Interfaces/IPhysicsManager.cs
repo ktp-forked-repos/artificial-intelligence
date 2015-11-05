@@ -1,7 +1,7 @@
 ﻿using System;
 using FarseerPhysics.Dynamics;
 
-namespace Game.Core.Interfaces
+namespace Game.Core.Managers.Interfaces
 {
   /// <summary>
   ///   The base for all physics manager classes.  Updates a Farseer physics

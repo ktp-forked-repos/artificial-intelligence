@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Common.Extensions;
 using Game.Core.Interfaces;
+using Game.Core.Managers.Interfaces;
 using Game.Core.Processes;
 using log4net;
 

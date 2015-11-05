@@ -6,6 +6,7 @@ using Common.Extensions;
 using Game.Core.Entities;
 using Game.Core.Events.Entity;
 using Game.Core.Interfaces;
+using Game.Core.Managers.Interfaces;
 using log4net;
 
 namespace Game.Core.Managers

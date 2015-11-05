@@ -5,6 +5,7 @@ using Common.Extensions;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using Game.Core.Interfaces;
+using Game.Core.Managers.Interfaces;
 using log4net;
 using Microsoft.Xna.Framework;
 

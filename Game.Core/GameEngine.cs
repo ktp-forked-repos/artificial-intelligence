@@ -10,6 +10,7 @@ using Game.Core.Events;
 using Game.Core.Events.Input;
 using Game.Core.Interfaces;
 using Game.Core.Managers;
+using Game.Core.Managers.Interfaces;
 using Game.Core.SFML;
 using log4net;
 using SFML.Window;

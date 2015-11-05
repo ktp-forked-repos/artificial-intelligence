@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Game.Core.Processes;
 
-namespace Game.Core.Interfaces
+namespace Game.Core.Managers.Interfaces
 {
   /// <summary>
   ///   Base interface for process managers.

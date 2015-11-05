@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using Game.Core.Entities;
 
-namespace Game.Core.Interfaces
+namespace Game.Core.Managers.Interfaces
 {
   /// <summary>
   ///   The base for all entity manager classes.

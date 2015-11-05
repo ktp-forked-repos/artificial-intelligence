@@ -6,6 +6,7 @@ using System.Reflection;
 using Common.Extensions;
 using Game.Core.Events;
 using Game.Core.Interfaces;
+using Game.Core.Managers.Interfaces;
 using log4net;
 
 namespace Game.Core.Managers

@@ -6,6 +6,7 @@ using Game.Core.Events.Entity;
 using Game.Core.Events.Input;
 using Game.Core.Interfaces;
 using Game.Core.Managers;
+using Game.Core.Managers.Interfaces;
 using Game.Core.SFML;
 using Game.Core.Tests.Stubs;
 using Microsoft.Xna.Framework;

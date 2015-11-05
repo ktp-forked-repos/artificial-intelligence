@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Game.Core.Events;
 
-namespace Game.Core.Interfaces
+namespace Game.Core.Managers.Interfaces
 {
   /// <summary>
   ///   Base interface for event managers.

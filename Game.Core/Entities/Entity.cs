@@ -7,6 +7,7 @@ using System.Text;
 using Common.Extensions;
 using Game.Core.Entities.Components;
 using Game.Core.Interfaces;
+using Game.Core.Managers.Interfaces;
 using log4net;
 
 namespace Game.Core.Entities

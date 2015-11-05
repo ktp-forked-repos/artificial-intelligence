@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.Core.Interfaces;
 using SFML.Graphics;
 
-namespace Game.Core.Interfaces
+namespace Game.Core.Managers.Interfaces
 {
   /// <summary>
   ///   The base for all render managers.
