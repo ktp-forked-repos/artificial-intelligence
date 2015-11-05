@@ -60,8 +60,7 @@ namespace Game.Core
       m_managers.Add(PhysicsManager);
       ProcessManager = new ProcessManager();
       m_managers.Add(ProcessManager);
-      // TODO: entity manager!
-      //EntityManager = new EntityManager(...);
+      EntityManager = new EntityManager(EventManager);
       m_managers.Add(EntityManager);
     }
 
