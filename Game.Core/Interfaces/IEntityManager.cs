@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Game.Core.Entities;
 
 namespace Game.Core.Interfaces
@@ -23,11 +25,15 @@ namespace Game.Core.Interfaces
     : IManager
   {
     /// <summary>
-    ///   Gets the next valid entity id.
+    ///   The entities held in the manager.
     /// </summary>
-    int NextId { get; }
+    /// <remarks>
+    ///   This is a copy of the entity list, it is safe to add/remove entities
+    ///   while iterating.
+    /// </remarks>
+    IReadOnlyCollection<Entity> Entities { get; }
 
-    /// <summary>
+      /// <summary>
     ///   Retrieves an entity from the manager.
     /// </summary>
     /// <param name="id"></param>
@@ -59,6 +65,8 @@ namespace Game.Core.Interfaces
     /// </exception>
     /// <exception cref="InvalidOperationException">
     ///   The entity's id is not unique.
+    ///   -or-
+    ///   The entity is not initialized.
     /// </exception>
     void AddEntity(Entity entity);
 

@@ -88,6 +88,7 @@
     <Compile Include="Interfaces\IProcessManager.cs" />
     <Compile Include="Interfaces\IRenderable.cs" />
     <Compile Include="Interfaces\IRenderManager.cs" />
+    <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Managers\PhysicsManager.cs" />
