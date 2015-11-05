@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
-using Common.Extensions;
 using Game.Core.Events;
 using Game.Core.Events.Input;
 using Game.Core.Interfaces;
 using Game.Core.Managers;
 using Game.Core.Managers.Interfaces;
 using Game.Core.SFML;
-using log4net;
+using NLog;
 using SFML.Window;
 
 namespace Game.Core
@@ -32,8 +30,7 @@ namespace Game.Core
   [ExcludeFromCodeCoverage]
   public class GameEngine
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     public const uint AntialiasingLevel = 8;
     // target 60 fps, allowing 1 ms to sleep
@@ -274,13 +271,13 @@ namespace Game.Core
 
     private bool Initialize()
     {
-      Log.Verbose("GameEngine Initializing");
+      Log.Trace("GameEngine Initializing");
 
       foreach (var manager in m_managers)
       {
         if (!manager.Initialize())
         {
-          Log.ErrorFmt("{0} failed initialization, aborting", 
+          Log.Error("{0} failed initialization, aborting", 
             manager.GetType().FullName);
           return false;
         }
@@ -291,13 +288,13 @@ namespace Game.Core
 
     private bool PostInitialize()
     {
-      Log.Verbose("GameEngine Post-Initializing");
+      Log.Trace("GameEngine Post-Initializing");
 
       foreach (var manager in m_managers)
       {
         if (!manager.PostInitialize())
         {
-          Log.ErrorFmt("{0} failed post-initialization, aborting",
+          Log.Error("{0} failed post-initialization, aborting",
             manager.GetType().FullName);
           return false;
         }
@@ -311,7 +308,7 @@ namespace Game.Core
 
     private void Shutdown()
     {
-      Log.Verbose("GameEngine Shutting Down");
+      Log.Trace("GameEngine Shutting Down");
 
       var reverseManagers = ((IEnumerable<IManager>) m_managers).Reverse();
       foreach (var manager in reverseManagers)

@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
-using Common.Extensions;
 using Game.Core.Events.Input;
-using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
-using log4net;
 using Microsoft.Xna.Framework;
+using NLog;
 using SFML.System;
 using SFML.Window;
 
@@ -26,8 +23,7 @@ namespace Game.Core.Managers
   public class InputManager
     : IManager
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     public const Mouse.Button SelectButton = Mouse.Button.Left;
     public const Mouse.Button ViewDragButton = Mouse.Button.Right;
@@ -75,7 +71,7 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
-      Log.Verbose("InputManager Initializing");
+      Log.Trace("InputManager Initializing");
 
       var keys = Enum.GetValues(typeof (Keyboard.Key))
         .Cast<Keyboard.Key>();
@@ -96,7 +92,7 @@ namespace Game.Core.Managers
 
     public bool PostInitialize()
     {
-      Log.Verbose("InputManager Post-Initializing");
+      Log.Trace("InputManager Post-Initializing");
 
       m_window.KeyPressed += HandleKeyPressed;
       m_window.KeyReleased += HandleKeyReleased;
@@ -115,7 +111,7 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
-      Log.Verbose("InputManager Shutting Down");
+      Log.Trace("InputManager Shutting Down");
 
       m_window.KeyPressed -= HandleKeyPressed;
       m_window.KeyReleased -= HandleKeyReleased;

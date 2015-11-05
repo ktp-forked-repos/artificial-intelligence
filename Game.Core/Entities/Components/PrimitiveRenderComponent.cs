@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Common.Extensions;
-using log4net;
+using NLog;
 using SFML.Graphics;
 
 namespace Game.Core.Entities.Components
@@ -19,8 +17,7 @@ namespace Game.Core.Entities.Components
   public sealed class PrimitiveRenderComponent
     : RenderComponentBase
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     private readonly Func<Shape> m_creator; 
     private Shape m_shape;
@@ -139,8 +136,8 @@ namespace Game.Core.Entities.Components
       m_shape = m_shape ?? m_creator();
       if (m_shape == null)
       {
-        Log.ErrorFmt("{0} {1} failed to create shape", Parent.Name,
-          GetType().FullName);
+        Log.Error("{0} {1} failed to create shape", 
+          Parent.Name,GetType().FullName);
         return false;
       }
 

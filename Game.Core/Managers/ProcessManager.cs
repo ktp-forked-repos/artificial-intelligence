@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Common.Extensions;
-using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
 using Game.Core.Processes;
-using log4net;
+using NLog;
 
 namespace Game.Core.Managers
 {
@@ -16,10 +14,9 @@ namespace Game.Core.Managers
   public class ProcessManager
     : IProcessManager
   {
-    private const int InitialListSize = 10;
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private const int InitialListSize = 10;
 
     private readonly List<ProcessBase> m_processes = 
       new List<ProcessBase>(InitialListSize);
@@ -38,14 +35,14 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
-      Log.Verbose("ProcessManager Initializing");
+      Log.Trace("ProcessManager Initializing");
 
       return true;
     }
 
     public bool PostInitialize()
     {
-      Log.Verbose("ProcessManager Post-Initializing");
+      Log.Trace("ProcessManager Post-Initializing");
 
       return true;
     }
@@ -60,10 +57,14 @@ namespace Game.Core.Managers
       if (m_toRemove.Any())
       {
         var notRemoved = m_processes.RemoveAllItems(m_toRemove,
-        (process, id) => process.Id == id);
-        Log.ErrorFmtIf(notRemoved.Any(),
-          "Process ids were slated for removal but not removed: {0}",
-          string.Join(",", notRemoved));
+          (process, id) => process.Id == id);
+
+        if (notRemoved.Any())
+        {
+          Log.Error("Process ids were slated for removal but not removed: {0}",
+            string.Join(",", notRemoved));
+        }
+        
         m_toRemove.Clear();
       }
 
@@ -76,9 +77,9 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
-      Log.Verbose("ProcessManager Shutting Down");
+      Log.Trace("ProcessManager Shutting Down");
 
-      Log.DebugFmt("Aborting {0} process chains", m_processes.Count);
+      Log.Debug("Aborting {0} process chains", m_processes.Count);
       foreach (var process in m_processes)
       {
         process.AbortAll();
@@ -120,7 +121,7 @@ namespace Game.Core.Managers
       process.Aborted += HandleProcessAborted;
 
       m_processes.Add(process);
-      Log.VerboseFmt("Added {0}", process.Name);
+      Log.Trace("Added {0}", process.Name);
     }
     
     #endregion
@@ -132,7 +133,7 @@ namespace Game.Core.Managers
       process.Aborted -= HandleProcessAborted;
 
       m_toRemove.Add(process.Id);
-      Log.VerboseFmt("Flagged process {0} for removal", process.Name);
+      Log.Trace("Flagged process {0} for removal", process.Name);
 
       if (process.Child == null)
       {
@@ -145,7 +146,7 @@ namespace Game.Core.Managers
       var child = process.RemoveChild();
       if (!activateChild)
       {
-        Log.DebugFmt("Children of {0} are not activating, aborting them",
+        Log.Debug("Children of {0} are not activating, aborting them",
           process.Name);
         child.AbortAll();
         return;
@@ -153,8 +154,8 @@ namespace Game.Core.Managers
 
       if (!child.IsInitialized && !child.Initialize())
       {
-        Log.ErrorFmt("{0}, child of {1}, was not initialized and failed to " +
-                     "initialize, aborting its chain", child.Name, process.Name);
+        Log.Error("{0}, child of {1}, was not initialized and failed to " +
+                  "initialize, aborting its chain", child.Name, process.Name);
         child.AbortAll();
         return;
       }

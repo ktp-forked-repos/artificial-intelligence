@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Common.Extensions;
 using Game.Core.Entities;
 using Game.Core.Events.Entity;
-using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
-using log4net;
+using NLog;
 
 namespace Game.Core.Managers
 {
   public class EntityManager
     : IEntityManager
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     private readonly IEventManager m_eventManager;
 
@@ -45,14 +41,14 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
-      Log.Verbose("EntityManager Initializing");
+      Log.Trace("EntityManager Initializing");
 
       return true;
     }
 
     public bool PostInitialize()
     {
-      Log.Verbose("EntityManager Post-Initializing");
+      Log.Trace("EntityManager Post-Initializing");
 
       return true;
     }
@@ -72,7 +68,7 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
-      Log.Verbose("EntityManager Shutting Down");
+      Log.Trace("EntityManager Shutting Down");
 
       foreach (var entity in Entities)
       {
@@ -122,7 +118,7 @@ namespace Game.Core.Managers
 
       m_entities.Add(entity.Id, entity);
       m_eventManager.QueueEvent(new EntityAddedEvent { EntityId = entity.Id });
-      Log.DebugFmt("Added entity {0}", entity.Name);
+      Log.Debug("Added entity {0}", entity.Name);
     }
 
     public void ActivateEntity(int id)

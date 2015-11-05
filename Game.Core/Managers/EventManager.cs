@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using Common.Extensions;
 using Game.Core.Events;
-using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
-using log4net;
+using NLog;
 
 namespace Game.Core.Managers
 {
@@ -17,11 +14,11 @@ namespace Game.Core.Managers
   public class EventManager
     : IEventManager
   {
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
     private const int InitialQueueSize = 10;
 
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
-
+    
     private readonly Stopwatch m_eventDispatchTimer = new Stopwatch();
     private readonly Dictionary<Type, Action<EventBase>> m_listeners =
       new Dictionary<Type, Action<EventBase>>();
@@ -55,14 +52,14 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
-      Log.Verbose("EventManager Initializing");
+      Log.Trace("EventManager Initializing");
 
       return true;
     }
 
     public bool PostInitialize()
     {
-      Log.Verbose("EventManager Post-Initializing");
+      Log.Trace("EventManager Post-Initializing");
 
       return true;
     }
@@ -89,13 +86,13 @@ namespace Game.Core.Managers
         count++;
       }
 
-      Log.VerboseFmt("Processed {0} events in {1:F4}s", count,
+      Log.Trace("Processed {0} events in {1:F4}s", count,
         m_eventDispatchTimer.Elapsed.TotalSeconds);
     }
 
     public void Shutdown()
     {
-      Log.Verbose("EventManager Shutting Down");
+      Log.Trace("EventManager Shutting Down");
 
       m_listeners.Clear();
       ReadQueue.Clear();
@@ -138,7 +135,7 @@ namespace Game.Core.Managers
         m_listeners[type] += listener;
       }
 
-      Log.VerboseFmt("{0} listener added", type.Name);
+      Log.Trace("{0} listener added", type.Name);
     }
 
     public void RemoveListener<T>(Action<EventBase> listener) 
@@ -149,13 +146,13 @@ namespace Game.Core.Managers
       var type = typeof(T);
       if (!m_listeners.ContainsKey(type))
       {
-        Log.WarnFmt("Tried to remove {0} listener but none exist", type.Name);
+        Log.Warn("Tried to remove {0} listener but none exist", type.Name);
         return;
       }
 
       // ReSharper disable once DelegateSubtraction
       m_listeners[type] -= listener;
-      Log.VerboseFmt("Removed {0} listener", type.Name);
+      Log.Trace("Removed {0} listener", type.Name);
     }
 
     public void TriggerEvent(EventBase evt)
@@ -166,11 +163,11 @@ namespace Game.Core.Managers
       Action<EventBase> listener;
       if (!m_listeners.TryGetValue(type, out listener) || listener == null)
       {
-        Log.VerboseFmt("Discarding {0}, no listeners", type.Name);
+        Log.Debug("Discarding {0}, no listeners", type.Name);
         return;
       }
 
-      Log.VerboseFmt("Dispatching {0}", type.Name);
+      Log.Trace("Dispatching {0}", type.Name);
       listener(evt);
     }
 
@@ -179,7 +176,7 @@ namespace Game.Core.Managers
       if (evt == null) throw new ArgumentNullException("evt");
 
       WriteQueue.Add(evt);
-      Log.VerboseFmt("Queued {0}", evt.GetType().Name);
+      Log.Trace("Queued {0}", evt.GetType().Name);
     }
 
     public bool AbortFirstEvent<T>() 
@@ -193,7 +190,7 @@ namespace Game.Core.Managers
       }
 
       WriteQueue.Remove(toRemove);
-      Log.VerboseFmt("Aborted {0}", type.Name);
+      Log.Trace("Aborted {0}", type.Name);
       return true;
     }
 
@@ -202,8 +199,7 @@ namespace Game.Core.Managers
     {
       var type = typeof(T);
       var count = WriteQueue.RemoveAll(e => e.GetType() == type);
-      Log.VerboseFmtIf(count > 0, "Aborted {0} events of type {1}", count, 
-        type.Name);
+      Log.Trace("Aborted {0} events of type {1}", count, type.Name);
       return count;
     }
 
@@ -211,7 +207,7 @@ namespace Game.Core.Managers
     {
       var count = WriteQueue.Count;
       WriteQueue.Clear();
-      Log.VerboseFmtIf(count > 0, "Cleared {0} events from queue", count);
+      Log.Trace("Cleared {0} events from queue", count);
       return count;
     }
 

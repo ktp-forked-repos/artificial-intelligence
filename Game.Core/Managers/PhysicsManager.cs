@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Common.Extensions;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
-using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
-using log4net;
 using Microsoft.Xna.Framework;
+using NLog;
 
 namespace Game.Core.Managers
 {
@@ -22,8 +19,7 @@ namespace Game.Core.Managers
   public class PhysicsManager
     : IPhysicsManager
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     // drive the physics world at a fixed 60 fps
     public const float UpdateInterval = 1f / 60f;
@@ -43,7 +39,7 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
-      Log.Verbose("PhysicsManager Initializing");
+      Log.Trace("PhysicsManager Initializing");
 
       // Farseer configuration
       Settings.AllowSleep = true;
@@ -51,7 +47,7 @@ namespace Game.Core.Managers
       Settings.VelocityIterations = 10;
       Settings.PositionIterations = 8;
 
-      Log.DebugFmt("UpdateInterval: {0:F4} ({1:F2} fps)", 
+      Log.Debug("UpdateInterval: {0:F4} ({1:F2} fps)", 
         UpdateInterval, 1 / UpdateInterval);
       World = new World(Vector2.Zero);
       return true;
@@ -59,7 +55,7 @@ namespace Game.Core.Managers
 
     public bool PostInitialize()
     {
-      Log.Verbose("PhysicsManager Post-Initializing");
+      Log.Trace("PhysicsManager Post-Initializing");
 
       return true;
     }
@@ -84,7 +80,7 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
-      Log.Verbose("PhysicsManager Shutting Down");
+      Log.Trace("PhysicsManager Shutting Down");
 
       PreStep = null;
       PostStep = null;

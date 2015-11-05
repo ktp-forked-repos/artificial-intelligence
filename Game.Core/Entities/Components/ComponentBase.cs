@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Reflection;
-using Common.Extensions;
-using log4net;
+using NLog;
 
 namespace Game.Core.Entities.Components
 {
@@ -14,8 +12,7 @@ namespace Game.Core.Entities.Components
   public abstract class ComponentBase
     : EntityLifeCycleBase
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     ///   Create the component.
@@ -57,23 +54,27 @@ namespace Game.Core.Entities.Components
 
     protected override bool DoInitialize()
     {
-      Log.VerboseFmt("{0} {1} initialized", Parent.Name, GetType().FullName);
+      Log.Trace("{0} {1} initialized", 
+        Parent.Name, GetType().FullName);
       return true;
     }
 
     protected override void DoActivate()
     {
-      Log.VerboseFmt("{0} {1} activated", Parent.Name, GetType().FullName);
+      Log.Trace("{0} {1} activated", 
+        Parent.Name, GetType().FullName);
     }
 
     protected override void DoDeactivate()
     {
-      Log.VerboseFmt("{0} {1} deactivated", Parent.Name, GetType().FullName);
+      Log.Trace("{0} {1} deactivated", 
+        Parent.Name, GetType().FullName);
     }
 
     protected override void DoDestroy()
     {
-      Log.VerboseFmt("{0} {1} destroyed", Parent.Name, GetType().FullName);
+      Log.Trace("{0} {1} destroyed", 
+        Parent.Name, GetType().FullName);
     }
   }
 }

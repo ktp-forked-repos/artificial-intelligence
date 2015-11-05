@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Common.Extensions;
 using Game.Core.Entities;
 using Game.Core.Events;
@@ -10,7 +9,7 @@ using Game.Core.Events.Input;
 using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
 using Game.Core.SFML;
-using log4net;
+using NLog;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -24,8 +23,7 @@ namespace Game.Core.Managers
   public sealed class RenderManager
     : IRenderManager
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-     MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     public const int DefaultFrameRate = 60;
     public static readonly Color DefaultBackgroundColor = Color.White;
@@ -97,14 +95,14 @@ namespace Game.Core.Managers
 
     public bool Initialize()
     {
-      Log.Verbose("RenderManager Initializing");
+      Log.Trace("RenderManager Initializing");
 
       return true;
     }
 
     public bool PostInitialize()
     {
-      Log.Verbose("RenderManager Post-Initializing");
+      Log.Trace("RenderManager Post-Initializing");
 
       m_eventManager.AddListener<EntityAddedEvent>(HandleEntityAdded);
       m_eventManager.AddListener<ViewDragEvent>(HandleViewDrag);
@@ -137,7 +135,7 @@ namespace Game.Core.Managers
 
     public void Shutdown()
     {
-      Log.Verbose("RenderManager Shutting Down");
+      Log.Trace("RenderManager Shutting Down");
 
       m_eventManager.RemoveListener<EntityAddedEvent>(HandleEntityAdded);
       m_eventManager.RemoveListener<ViewDragEvent>(HandleViewDrag);
@@ -224,22 +222,25 @@ namespace Game.Core.Managers
         AddRenderable(component);
       }
 
-      Log.DebugFmtIf(components.Count > 0,
-        "Added {0} IRenderables from {1}", components.Count, entity.Name);
+      Log.Debug("Added {0} IRenderables from {1}", 
+        components.Count, entity.Name);
     }
 
     private void RemoveRenderablesFromEntity(Entity entity)
     {
       var components = entity.GetComponentsByBase<IRenderable>();
       var notFound = m_renderables.RemoveAllItems(components,
-            (r1, r2) => r1.RenderId == r2.RenderId);
+        (r1, r2) => r1.RenderId == r2.RenderId);
+      
       // a destroyed entity may have already had its renderables removed
-      Log.ErrorFmtIf(notFound.Any() && !entity.IsDestroyed,
-        "Components not found during removal: {0}",
-        string.Join(",", notFound));
+      if (notFound.Any() && !entity.IsDestroyed)
+      {
+        Log.Error("Components not found during removal: {0}",
+          string.Join(",", notFound));
+      }
 
-      Log.DebugFmtIf(components.Count > 0,
-        "Removed {0} IRenderables from {1}", components.Count, entity.Name);
+      Log.Debug("Removed {0} IRenderables from {1}", 
+        components.Count, entity.Name);
     }
 
     private void UpdateViewSize()
@@ -256,7 +257,7 @@ namespace Game.Core.Managers
       Entity entity;
       if (!m_entityManager.TryGetEntity(evt.EntityId, out entity))
       {
-        Log.ErrorFmt("Entity {0} not found", evt.EntityId);
+        Log.Error("Entity {0} not found", evt.EntityId);
         return;
       }
 

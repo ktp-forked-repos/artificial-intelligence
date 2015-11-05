@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Common.Extensions;
 using Game.Core.Interfaces;
-using log4net;
+using NLog;
 using SFML.Graphics;
 
 namespace Game.Core.Entities.Components
@@ -23,8 +21,7 @@ namespace Game.Core.Entities.Components
   public abstract class RenderComponentBase
     : ComponentBase, IRenderable
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     ///   Render states to be used when drawing.
@@ -87,8 +84,8 @@ namespace Game.Core.Entities.Components
 
       if (Parent.TransformComponent == null)
       {
-        Log.ErrorFmt("{0} tried to initialize RenderComponentBase without " +
-                     "a TransformComponentBase", Parent.Name);
+        Log.Error("{0} tried to initialize RenderComponentBase without " +
+                  "a TransformComponentBase", Parent.Name);
         return false;
       }
 

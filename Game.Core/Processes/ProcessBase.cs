@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
-using Common.Extensions;
-using log4net;
+using NLog;
 
 namespace Game.Core.Processes
 {
@@ -44,8 +42,7 @@ namespace Game.Core.Processes
   /// </summary>
   public abstract class ProcessBase
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     ///   Create the process.
@@ -282,11 +279,11 @@ namespace Game.Core.Processes
 
       if (!DoInitialize())
       {
-        Log.ErrorFmt("{0} failed initialization", Name);
+        Log.Error("{0} failed initialization", Name);
         return false;
       }
 
-      Log.VerboseFmt("{0} initialized", Name);
+      Log.Trace("{0} initialized", Name);
       State = ProcessState.Paused;
 
       return true;
@@ -352,7 +349,7 @@ namespace Game.Core.Processes
     {
       Debug.Assert(IsAlive);
 
-      Log.VerboseFmt("{0} succeeded", Name);
+      Log.Trace("{0} succeeded", Name);
       State = ProcessState.Succeeded;
       DoSucceed();
       OnSucceeded();
@@ -365,7 +362,7 @@ namespace Game.Core.Processes
     {
       Debug.Assert(IsAlive);
 
-      Log.VerboseFmt("{0} failed", Name);
+      Log.Trace("{0} failed", Name);
       State = ProcessState.Failed;
       DoFail();
       OnFailed();
@@ -376,7 +373,7 @@ namespace Game.Core.Processes
     /// </summary>
     public void Abort()
     {
-      Log.VerboseFmt("{0} aborted", Name);
+      Log.Trace("{0} aborted", Name);
       State = ProcessState.Aborted;
       DoAbort();
       OnAborted();

@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using Common.Extensions;
 using Game.Core.Entities.Components;
-using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
-using log4net;
+using NLog;
 
 namespace Game.Core.Entities
 {
@@ -25,8 +22,7 @@ namespace Game.Core.Entities
   public class Entity
     : EntityLifeCycleBase
   {
-    private static readonly ILog Log = LogManager.GetLogger(
-      MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
     private readonly Dictionary<Type, ComponentBase> m_components = 
       new Dictionary<Type, ComponentBase>(); 
@@ -130,7 +126,7 @@ namespace Game.Core.Entities
           "Duplicate component " + component.GetType().Name);
 
       m_components.Add(component.GetType(), component);
-      Log.VerboseFmt("{0} added {1}", Name, component.GetType().Name);
+      Log.Trace("{0} added {1}", Name, component.GetType().Name);
     }
 
     /// <summary>
@@ -180,7 +176,7 @@ namespace Game.Core.Entities
         return (T) component;
       }
 
-      Log.DebugFmt("{0} does not have requested component {1}",
+      Log.ConditionalDebug("{0} does not have requested component {1}",
         Name, type.Name);
       return null;
     }
@@ -220,8 +216,7 @@ namespace Game.Core.Entities
       }
       else if (transforms.Count == 0)
       {
-        Log.WarnFmt("{0} initialized with no TransformComponentBase",
-          Name);
+        Log.Warn("{0} initialized with no TransformComponentBase", Name);
       }
       else
       {
@@ -232,7 +227,7 @@ namespace Game.Core.Entities
       {
         if (!component.Initialize())
         {
-          Log.ErrorFmt("Failed to initialize {0} in {1}",
+          Log.Error("Failed to initialize {0} in {1}",
             component.GetType().Name, Name);
           Destroy();
           return false;
@@ -245,7 +240,7 @@ namespace Game.Core.Entities
         }
       }
 
-      Log.VerboseFmt("{0} initialized {1} components",
+      Log.Trace("{0} initialized {1} components",
         Name, m_components.Count);
       return true;
     }
@@ -257,7 +252,7 @@ namespace Game.Core.Entities
         component.Activate();
       }
 
-      Log.VerboseFmt("{0} activated", Name);
+      Log.Trace("{0} activated", Name);
     }
 
     protected override void DoDeactivate()
@@ -267,7 +262,7 @@ namespace Game.Core.Entities
         component.Deactivate();
       }
 
-      Log.VerboseFmt("{0} deactivated", Name);
+      Log.Trace("{0} deactivated", Name);
     }
 
     protected override void DoDestroy()
@@ -277,7 +272,7 @@ namespace Game.Core.Entities
         component.Destroy();
       }
 
-      Log.VerboseFmt("{0} destroyed", Name);
+      Log.Trace("{0} destroyed", Name);
     }
 
     protected override void Dispose(bool disposing)
