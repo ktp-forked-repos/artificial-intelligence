@@ -23,7 +23,7 @@ namespace Minesweeper
       var window = new MainWindow(pid);
       var engine = new GameEngine(window)
       {
-        ApplicationEventHook = () => Application.DoEvents(),
+        ApplicationEventHook = Application.DoEvents,
         LimitCpuUsage = true,
         UseWallTime = true,
         StartPaused = true

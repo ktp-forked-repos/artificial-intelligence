@@ -86,6 +86,9 @@ namespace Game.Core
       RenderManager = new RenderManager(EntityManager, EventManager,
         renderWindow);
       m_managers.Add(RenderManager);
+
+      // not needed in a headless game... I think?
+      m_managers.Add(new InputManager(renderWindow, EventManager));
     }
 
     /// <summary>
@@ -134,16 +137,7 @@ namespace Game.Core
       get { return m_paused; }
       set
       {
-        // very important:
-        // without this check we'd get in an infinite loop of pause events
-        // and pause state updates
-        if (value == m_paused)
-        {
-          return;
-        }
-
-        m_paused = value;
-        UpdatePausedState();
+        UpdatePausedState(value, true);
       }
     }
 
@@ -316,14 +310,23 @@ namespace Game.Core
       }
     }
 
-    private void UpdatePausedState()
+    private void UpdatePausedState(bool newState, bool fireEvent)
     {
+      if (m_paused == newState)
+      {
+        return;
+      }
+
+      m_paused = newState;
       foreach (var manager in m_managers.Where(m => m.CanPause))
       {
         manager.Paused = m_paused;
       }
 
-      EventManager.TriggerEvent(new GamePausedEvent { IsPaused = IsPaused });
+      if (fireEvent)
+      {
+        EventManager.TriggerEvent(new GamePausedEvent { IsPaused = IsPaused });
+      }
     }
 
     private bool StopEngine()
@@ -337,7 +340,7 @@ namespace Game.Core
     private void HandleGamePaused(EventBase e)
     {
       var evt = (GamePausedEvent) e;
-      IsPaused = evt.IsPaused;
+      UpdatePausedState(evt.IsPaused, false);
     }
 
     #endregion
