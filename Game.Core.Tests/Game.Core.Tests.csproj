@@ -83,6 +83,7 @@
     <Compile Include="EntityTests\ComponentTests\ComponentBaseTests.cs" />
     <Compile Include="EntityTests\EntityLifeCycleBaseTests.cs" />
     <Compile Include="EntityTests\EntityTests.cs" />
+    <Compile Include="ExtensionsTests\ListExtensionsTests.cs" />
     <Compile Include="ManagerTests\EntityManagerTests.cs" />
     <Compile Include="ManagerTests\EventManagerTests.cs" />
     <Compile Include="ManagerTests\ProcessManagerTests.cs" />

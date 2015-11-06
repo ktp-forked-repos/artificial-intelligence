@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Extensions;
+using Game.Core.Extensions;
 using NUnit.Framework;
+
 // ReSharper disable CollectionNeverUpdated.Local
 // ReSharper disable RedundantCast
 // ReSharper disable PossibleMultipleEnumeration
 
-namespace Common.Tests.ExtensionsTests
+namespace Game.Core.Tests.ExtensionsTests
 {
   [TestFixture]
   public class ListExtensionsTests

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Extensions;
 using Game.Core.Entities;
 using Game.Core.Events;
 using Game.Core.Events.Entity;
 using Game.Core.Events.Input;
+using Game.Core.Extensions;
 using Game.Core.Interfaces;
 using Game.Core.Managers.Interfaces;
 using Game.Core.SFML;

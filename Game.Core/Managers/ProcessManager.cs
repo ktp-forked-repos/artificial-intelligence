@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Extensions;
+using Game.Core.Extensions;
 using Game.Core.Managers.Interfaces;
 using Game.Core.Processes;
 using NLog;

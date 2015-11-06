@@ -79,6 +79,7 @@
     <Compile Include="Events\Input\ViewDragEvent.cs" />
     <Compile Include="Events\Input\MoveEvent.cs" />
     <Compile Include="Events\Input\ViewZoomEvent.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="Interfaces\IDrawingWindow.cs" />
@@ -103,12 +104,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{b7fc6a7a-e158-4afe-95cd-a7c76fe0c61d}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
