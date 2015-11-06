@@ -81,6 +81,8 @@
     <Compile Include="Events\Input\ViewZoomEvent.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="Factories\IEntityFactory.cs" />
+    <Compile Include="Factories\IFactory.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="Interfaces\IDrawingWindow.cs" />
     <Compile Include="Interfaces\IPhysicsObject.cs" />

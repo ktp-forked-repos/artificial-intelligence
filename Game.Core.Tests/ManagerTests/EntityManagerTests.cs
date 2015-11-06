@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Core.Entities;
-using Game.Core.Interfaces;
+using Game.Core.Factories;
 using Game.Core.Managers;
 using Game.Core.Managers.Interfaces;
 using Game.Core.Tests.Stubs;
 using Moq;
 using NUnit.Framework;
+using SFML.Graphics;
 
 namespace Game.Core.Tests.ManagerTests
 {
@@ -193,6 +190,83 @@ namespace Game.Core.Tests.ManagerTests
       Assert.IsTrue(result);
       Assert.IsNotNull(entityResult);
       Assert.AreSame(entity, entityResult);
+    }
+
+    [Test]
+    public void CreateEntity_HandlesNull()
+    {
+      entityManager.Initialize();
+      entityManager.PostInitialize();
+
+      TestDelegate func = () => entityManager.CreateEntity(null);
+
+      Assert.Throws<ArgumentNullException>(func);
+      Assert.IsEmpty(entityManager.Entities);
+    }
+
+    [Test]
+    public void CreateEntity_HandlesEntityFactoryNull()
+    {
+      entityManager.Initialize();
+      entityManager.PostInitialize();
+
+      TestDelegate func = () => entityManager.CreateEntity("test");
+
+      Assert.Throws<InvalidOperationException>(func);
+      Assert.IsEmpty(entityManager.Entities);
+    }
+
+    [Test]
+    public void CreateEntity_HandlesCreationFailed()
+    {
+      var factoryMock = new Mock<IEntityFactory>();
+      factoryMock.Setup(m => m.Create(It.IsNotNull<string>()))
+        .Returns((Entity) null);
+      entityManager.EntityFactory = factoryMock.Object;
+      entityManager.Initialize();
+      entityManager.PostInitialize();
+
+      var result = entityManager.CreateEntity("test");
+
+      Assert.IsNull(result);
+      Assert.IsEmpty(entityManager.Entities);
+    }
+
+    [Test]
+    public void CreateEntity_HandlesInitializationFailure()
+    {
+      var entity = new Entity(1);
+      entity.AddComponent(new ComponentStub(entity, false));
+      var factoryMock = new Mock<IEntityFactory>();
+      factoryMock.Setup(m => m.Create(It.IsNotNull<string>()))
+        .Returns(entity);
+      entityManager.EntityFactory = factoryMock.Object;
+      entityManager.Initialize();
+      entityManager.PostInitialize();
+
+      var result = entityManager.CreateEntity("test");
+
+      Assert.IsNull(result);
+      Assert.IsEmpty(entityManager.Entities);
+    }
+
+    [Test]
+    public void CreateEntity_AddsEntity()
+    {
+      var entity = new Entity(1);
+      entity.AddComponent(new ComponentStub(entity));
+      var factoryMock = new Mock<IEntityFactory>();
+      factoryMock.Setup(m => m.Create(It.IsNotNull<string>()))
+        .Returns(entity);
+      entityManager.EntityFactory = factoryMock.Object;
+      entityManager.Initialize();
+      entityManager.PostInitialize();
+
+      var result = entityManager.CreateEntity("test");
+
+      Assert.IsNotNull(result);
+      Assert.IsTrue(result.IsInitialized);
+      Assert.AreEqual(1, entityManager.Entities.Count);
     }
 
     [Test]

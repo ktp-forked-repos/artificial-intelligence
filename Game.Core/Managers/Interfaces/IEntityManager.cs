@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Game.Core.Entities;
+using Game.Core.Factories;
 
 namespace Game.Core.Managers.Interfaces
 {
@@ -23,6 +24,20 @@ namespace Game.Core.Managers.Interfaces
   public interface IEntityManager
     : IManager
   {
+    /// <summary>
+    ///   Get the next valid entity id.
+    /// </summary>
+    /// <remarks>
+    ///   Strictly speaking you don't have to use this, but if you don't you'll
+    ///   have to be careful to avoid id collisions.
+    /// </remarks>
+    int NextEntityId { get; }
+
+    /// <summary>
+    ///   The factory that is used by <see cref="CreateEntity"/>.
+    /// </summary>
+    IEntityFactory EntityFactory { get; set; }
+
     /// <summary>
     ///   The entities held in the manager.
     /// </summary>
@@ -52,6 +67,24 @@ namespace Game.Core.Managers.Interfaces
     ///   True if the entity was found.
     /// </returns>
     bool TryGetEntity(int id, out Entity entity);
+
+    /// <summary>
+    ///   Create an entity using the <see cref="EntityFactory"/> registered 
+    ///   with the manager.  The entity is initialized and added to the manager.
+    /// </summary>
+    /// <param name="templateName">
+    ///   The name of the factory template to create.
+    /// </param>
+    /// <returns>
+    ///   The created entity, or null if creation failed.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///   templateName is null
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   <see cref="EntityFactory"/> is null
+    /// </exception>
+    Entity CreateEntity(string templateName);
 
     /// <summary>
     ///   Adds an entity to be handled by the manager.

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Game.Core.Entities;
 using Game.Core.Events.Entity;
+using Game.Core.Factories;
 using Game.Core.Managers.Interfaces;
 using NLog;
 
 namespace Game.Core.Managers
 {
+  /// <summary>
+  ///   The default entity manager implementation.
+  /// </summary>
   public class EntityManager
     : IEntityManager
   {
@@ -17,7 +21,8 @@ namespace Game.Core.Managers
 
     private readonly Dictionary<int, Entity> m_entities = 
       new Dictionary<int, Entity>(); 
-    private readonly List<Entity> m_updateEntities = new List<Entity>(); 
+    private readonly List<Entity> m_updateEntities = new List<Entity>();
+    private int m_nextId = 1;
 
     /// <summary>
     ///   Create the manager.
@@ -82,6 +87,13 @@ namespace Game.Core.Managers
     #endregion
     #region IEntityManager
 
+    public int NextEntityId
+    {
+      get { return m_nextId++; }
+    }
+
+    public IEntityFactory EntityFactory { get; set; }
+
     public IReadOnlyCollection<Entity> Entities
     {
       get { return m_entities.Values.ToList(); }
@@ -96,6 +108,30 @@ namespace Game.Core.Managers
     public bool TryGetEntity(int id, out Entity entity)
     {
       return m_entities.TryGetValue(id, out entity);
+    }
+
+    public Entity CreateEntity(string templateName)
+    {
+      if (string.IsNullOrEmpty(templateName))
+        throw new ArgumentNullException("templateName");
+      if (EntityFactory == null) 
+        throw new InvalidOperationException("EntityFactory is null");
+
+      var entity = EntityFactory.Create(templateName);
+      if (entity == null)
+      {
+        Log.Error("Failed to create entity from template {0}",
+          templateName);
+        return null;
+      }
+      if (!entity.Initialize())
+      {
+        Log.Error("{0} failed to initialize, discarding", entity.Name);
+        return null;
+      }
+
+      AddEntity(entity);
+      return entity;
     }
 
     public void AddEntity(Entity entity)
