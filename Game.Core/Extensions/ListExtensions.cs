@@ -138,5 +138,29 @@ namespace Game.Core.Extensions
       remainingItems.RemoveRange(numRemaining, removedCount);
       return remainingItems;
     }
+
+    /// <summary>
+    ///   Copies the contents of one list to another list of the same size.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="dest"></param>
+    /// <exception cref="ArgumentNullException">
+    ///   dest is null.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///   source and dest are not the same size.
+    /// </exception>
+    public static void CopyAllTo<T>(this IReadOnlyList<T> source, IList<T> dest)
+    {
+      if (dest == null) throw new ArgumentNullException("dest");
+      if (source.Count != dest.Count) 
+        throw new InvalidOperationException("List sizes do not match");
+
+      for (var i = 0; i < dest.Count; i++)
+      {
+        dest[i] = source[i];
+      }
+    }
   }
 }
