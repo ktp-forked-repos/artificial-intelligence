@@ -99,6 +99,9 @@
     <Compile Include="Managers\PhysicsManager.cs" />
     <Compile Include="Managers\ProcessManager.cs" />
     <Compile Include="Managers\RenderManager.cs" />
+    <Compile Include="NeuralNet\Interfaces\ILayer.cs" />
+    <Compile Include="NeuralNet\Interfaces\INetwork.cs" />
+    <Compile Include="NeuralNet\Interfaces\INeuron.cs" />
     <Compile Include="NeuralNet\Layer.cs" />
     <Compile Include="NeuralNet\Network.cs" />
     <Compile Include="NeuralNet\NeuronBase.cs" />

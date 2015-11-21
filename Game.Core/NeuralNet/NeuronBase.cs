@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Game.Core.Extensions;
+using Game.Core.NeuralNet.Interfaces;
 
 namespace Game.Core.NeuralNet
 {
   /// <summary>
-  ///   Represents a neuron in a neural network.
+  ///   The base for neuron implementations.
   /// </summary>
-  public abstract class NeuronBase
+  public abstract class NeuronBase 
+    : INeuron
   {
     /// <summary>
     ///   Create a neuron.  The number of inputs expected are determined by the
@@ -24,73 +25,52 @@ namespace Game.Core.NeuralNet
     /// <exception cref="ArgumentOutOfRangeException">
     ///   index is less than 0
     /// </exception>
-    protected NeuronBase(Layer layer, int index)
+    protected NeuronBase(ILayer layer, int index)
     {
       if (layer == null) throw new ArgumentNullException("layer");
       if (index < 0) throw new ArgumentOutOfRangeException("index");
 
       Layer = layer;
       Index = index;
+      Name = string.Format("{0}:Neuron {1}", Layer.Name, Index);
       Weights = new List<float>(Enumerable.Repeat(0f, NumInputs));
     }
 
-    /// <summary>
-    ///   Get the layer that contains this neuron.
-    /// </summary>
-    public Layer Layer { get; private set; }
+    public ILayer Layer { get; private set; }
 
-    /// <summary>
-    ///   Get the neuron's position in the layer.
-    /// </summary>
     public int Index { get; private set; }
 
-    /// <summary>
-    ///   Get the number of inputs the neuron takes.
-    /// </summary>
+    public string Name { get; private set; }
+
     public int NumInputs
     {
       get { return Layer.NumInputs; }
     }
     
-    /// <summary>
-    ///   Get the input weights.  Modifying these values is expected.  Changing
-    ///   the number of weights is an invalid operation.
-    /// </summary>
     public IList<float> Weights { get; private set; }
 
-    /// <summary>
-    ///   Get or set the activation bias.
-    /// </summary>
     public float Bias { get; set; }
 
-    /// <summary>
-    ///   Get the current inputs to the neuron.
-    /// </summary>
     public IReadOnlyList<float> Inputs
     {
-      get { return Layer.Inputs.AsReadOnly(); }
+      get { return Layer.Inputs; }
     }
 
-    /// <summary>
-    ///   Get the last output (activation) calculated by the neuron.
-    /// </summary>
     public float Output { get; private set; }
 
-    /// <summary>
-    ///   Update the neuron's output based on the inputs assigned to its layer.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    ///   You've changed the number of <see cref="Weights"/>, you bastard.
-    /// </exception>
-    public void Update()
+    public void Update(IReadOnlyList<float> inputs)
     {
-      if (Weights.Count != Inputs.Count)
+      if (inputs == null) throw new ArgumentNullException("inputs");
+      if (inputs.Count != NumInputs)
+        throw new InvalidOperationException(string.Format(
+          "Expected {0} inputs, got {1}", NumInputs, inputs.Count));
+      if (Weights.Count != NumInputs)
         throw new InvalidOperationException("Invalid number of weights");
 
       var netInput = 0f;
       for (var i = 0; i < NumInputs; i++)
       {
-        netInput += Inputs[i] * Weights[i];
+        netInput += inputs[i] * Weights[i];
       }
 
       Output = Activation(netInput + Bias);

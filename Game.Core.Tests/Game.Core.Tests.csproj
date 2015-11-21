@@ -90,10 +90,13 @@
     <Compile Include="ManagerTests\RenderManagerTests.cs" />
     <Compile Include="MiscTests\RenderCompareTests.cs" />
     <Compile Include="MiscTests\VectorExtensionsTests.cs" />
+    <Compile Include="NeuralNetTests\LayerTests.cs" />
+    <Compile Include="NeuralNetTests\NeuronBaseTests.cs" />
     <Compile Include="ProcessTests\ProcessBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\ComponentStub.cs" />
     <Compile Include="Stubs\EntityLifeCycleStub.cs" />
+    <Compile Include="Stubs\NeuronStub.cs" />
     <Compile Include="Stubs\ProcessStub.cs" />
   </ItemGroup>
   <ItemGroup>

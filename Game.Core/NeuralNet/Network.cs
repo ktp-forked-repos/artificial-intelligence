@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Game.Core.Extensions;
+using Game.Core.NeuralNet.Interfaces;
 
 namespace Game.Core.NeuralNet
 {
   /// <summary>
-  ///   Represents a neural network.
+  ///   The base network implementation
   /// </summary>
-  public class Network
+  public class Network 
+    : INetwork
   {
-    private readonly List<Layer> m_layers = new List<Layer>(); 
+    private readonly List<ILayer> m_layers = new List<ILayer>();
 
-    /// <summary>
-    ///   Get or set the id of this network.
-    /// </summary>
-    public int Id { get; set; }
+    public Network(int id)
+    {
+      Id = id;
+      Name = string.Format("Network {0}", Id);
+    }
 
-    /// <summary>
-    ///   Get the number of inputs expected by the network.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    ///   The network has no layers.
-    /// </exception>
+    public int Id { get; private set; }
+
+    public string Name { get; private set; }
+    
     public int NumInputs
     {
       get
@@ -35,12 +34,6 @@ namespace Game.Core.NeuralNet
       }
     }
 
-    /// <summary>
-    ///   Get the number of outputs produced by the network.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    ///   The network has no layers.
-    /// </exception>
     public int NumOutputs
     {
       get
@@ -52,20 +45,11 @@ namespace Game.Core.NeuralNet
       }
     }
 
-    /// <summary>
-    ///   Get the layers in the network.
-    /// </summary>
-    public IReadOnlyList<Layer> Layers
+    public IReadOnlyList<ILayer> Layers
     {
       get { return m_layers; }
     }
 
-    /// <summary>
-    ///   Get the last inputs to the network.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    ///   The network has no layers.
-    /// </exception>
     public IReadOnlyList<float> Inputs
     {
       get
@@ -73,16 +57,10 @@ namespace Game.Core.NeuralNet
         if (!Layers.Any())
           throw new InvalidOperationException("The network has no layers");
 
-        return Layers.First().Inputs.AsReadOnly();
+        return Layers.First().Inputs;
       }
     }
 
-    /// <summary>
-    ///   Get the last outputs produced by the network.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    ///   The network has no layers.
-    /// </exception>
     public IReadOnlyList<float> Outputs
     {
       get
@@ -94,19 +72,7 @@ namespace Game.Core.NeuralNet
       }
     }
 
-    /// <summary>
-    ///   Add a layer to the neural network.  The number of inputs expected by
-    ///   the layer must match the number of outputs byt the last layer in
-    ///   the network (unless layer is the first layer added).
-    /// </summary>
-    /// <param name="layer"></param>
-    /// <exception cref="ArgumentNullException">
-    ///   layer is null
-    /// </exception>
-    /// <exception cref="InvalidOperationException">
-    ///   Layer's expected number of inputs is incorrect.
-    /// </exception>
-    public void AddLayer(Layer layer)
+    public void AddLayer(ILayer layer)
     {
       if (layer == null) throw new ArgumentNullException("layer");
       if (Layers.Any() && NumOutputs != layer.NumInputs)
@@ -117,18 +83,6 @@ namespace Game.Core.NeuralNet
       m_layers.Add(layer);
     }
 
-    /// <summary>
-    ///   Update the network with new inputs.
-    /// </summary>
-    /// <param name="inputs"></param>
-    /// <exception cref="ArgumentNullException">
-    ///   inputs is null
-    /// </exception>
-    /// <exception cref="InvalidOperationException">
-    ///   The network has no layers
-    ///   -or-
-    ///   The number of inputs is incorrect.
-    /// </exception>
     public void Update(IReadOnlyList<float> inputs)
     {
       if (inputs == null) throw new ArgumentNullException("inputs");
@@ -140,8 +94,7 @@ namespace Game.Core.NeuralNet
 
       foreach (var layer in Layers)
       {
-        inputs.CopyAllTo(layer.Inputs);
-        layer.Update();
+        layer.Update(inputs);
         inputs = layer.Outputs;
       }
     }
