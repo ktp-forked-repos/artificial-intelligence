@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Game.Core.Extensions
 {
@@ -161,6 +162,17 @@ namespace Game.Core.Extensions
       {
         dest[i] = source[i];
       }
+    }
+
+    /// <summary>
+    ///   Projects a list as a read only collection.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static ReadOnlyCollection<T> AsReadOnly<T>(this IList<T> list)
+    {
+      return new ReadOnlyCollection<T>(list);
     }
   }
 }
